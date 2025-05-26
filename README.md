@@ -15,6 +15,36 @@ Askeri ve sivil araçların görev yönetimi, araç takibi, kademe işlemleri ve
 9. [Sistem Gereksinimleri](#sistem-gereksinimleri)
 10. [Kullanım Kılavuzu Görselleri](#kullanım-kılavuzu-görselleri)
 
+
+## Kullanım Kılavuzu Görselleri
+
+Aşağıda sistemin temel özelliklerine ilişkin ekran görüntüleri bulunmaktadır:
+
+### Giriş Ekranı
+![Image](https://github.com/user-attachments/assets/f45de4ec-8d40-40a7-ad00-a5d3801bbc80)
+
+### Ana Sayfa
+![Image](https://github.com/user-attachments/assets/c1782ed1-8830-475a-b818-2e3855199005)
+
+### Araç Kayıt İşlemleri
+![Image](https://github.com/user-attachments/assets/ea095e0e-0a09-4c62-83e7-0f22db261643)
+
+### Görev Oluşturma
+![Image](https://github.com/user-attachments/assets/83ef1078-67b6-42e8-93ea-8e73672332c7)
+
+### Kademe İşlemleri
+![Image](https://github.com/user-attachments/assets/b169ff00-9dcb-4423-9701-4dd808b75e8a)
+
+### Raporlar
+![Image](https://github.com/user-attachments/assets/9eb67d8c-3974-46eb-a346-c41f1c569330)
+
+### Sistem Logları
+![Image](https://github.com/user-attachments/assets/65f1f682-748b-4978-863d-d4d3f88387fa)
+
+> Not: Görseller, eğitim amaçlı olup gerçek verileri içermemektedir.
+
+
+
 ## Proje Hakkında
 
 Araç Sevk Merkezi, özellikle askeri kurumlar için geliştirilmiş, araçların görevlendirilmesi, araç bakım takibi ve araç kullanım raporlarının tutulması amacıyla tasarlanmış bir yönetim sistemidir. Sistem, araç filosunun etkin yönetimi, sürücülerin görevlendirilmesi ve bakım-onarım süreçlerinin detaylı takibini sağlar.
@@ -268,32 +298,7 @@ Her kullanıcı rolü, Angular Router Guards ve JWT payload doğrulaması ile g�
 - Minimum 1366x768 ekran çözünürlüğü
 - Stabil ağ bağlantısı (offline kullanım için yerel ağ yeterli)
 
-## Kullanım Kılavuzu Görselleri
 
-Aşağıda sistemin temel özelliklerine ilişkin ekran görüntüleri bulunmaktadır:
-
-### Giriş Ekranı
-https://github.com/user-attachments/assets/f45de4ec-8d40-40a7-ad00-a5d3801bbc80))](https://github.com/re06kan/arac-sevk-merkezi/issues/1#issue-3092021552)](https://private-user-images.githubusercontent.com/190698863/447684178-f45de4ec-8d40-40a7-ad00-a5d3801bbc80.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NDgyOTMwNjIsIm5iZiI6MTc0ODI5Mjc2MiwicGF0aCI6Ii8xOTA2OTg4NjMvNDQ3Njg0MTc4LWY0NWRlNGVjLThkNDAtNDBhNy1hZDAwLWE1ZDM4MDFiYmM4MC5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUwNTI2JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MDUyNlQyMDUyNDJaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT1lMjE3MTE5NzQ0M2EwZTliOGE3ZjRlYmM1ODViNTRhZDY3OTkyOWJmZmI5NmEwY2Y5MGExOTI5NTRiOGJkZmVmJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.xl_Dip1n6KzxU9T_GOINcKHcXFXGyIF19U_CwcKc0wU
-
-### Ana Sayfa
-[![Ana Sayfa](src/assets/klavuz/ana-sayfa.png)](https://github.com/re06kan/arac-sevk-merkezi/issues/2#issue-3092026220)
-
-### Araç Kayıt İşlemleri
-[![Araç Kayıt](src/assets/klavuz/arac-kayit.png)](https://github.com/re06kan/arac-sevk-merkezi/issues/3#issue-3092027436)
-
-### Görev Oluşturma
-[![Görev Oluşturma](src/assets/klavuz/gorev-olusturma.png)](https://github.com/re06kan/arac-sevk-merkezi/issues/4#issue-3092028190)
-
-### Kademe İşlemleri
-[![Kademe İşlemleri](src/assets/klavuz/kademe-islemleri.png)](https://github.com/re06kan/arac-sevk-merkezi/issues/5#issue-3092028996)
-
-### Raporlar
-[![Raporlar](src/assets/klavuz/raporlar.png)](https://github.com/re06kan/arac-sevk-merkezi/issues/6#issue-3092029717)
-
-### Sistem Logları
-[![Sistem Logları](src/assets/klavuz/sistem-loglari.png)](https://github.com/re06kan/arac-sevk-merkezi/issues/7#issue-3092030454)
-
-> Not: Görseller, eğitim amaçlı olup gerçek verileri içermemektedir.
 
 ## Güvenlik ve Şifreleme
 
