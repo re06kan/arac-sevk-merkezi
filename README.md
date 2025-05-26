@@ -273,7 +273,7 @@ Her kullanıcı rolü, Angular Router Guards ve JWT payload doğrulaması ile g�
 Aşağıda sistemin temel özelliklerine ilişkin ekran görüntüleri bulunmaktadır:
 
 ### Giriş Ekranı
-[![Giriş Ekranı]([src/assets/klavuz/giris-ekrani.png](https://github.com/user-attachments/assets/f45de4ec-8d40-40a7-ad00-a5d3801bbc80))](https://github.com/re06kan/arac-sevk-merkezi/issues/1#issue-3092021552)
+[[![Giriş Ekranı]([src/assets/klavuz/giris-ekrani.png](https://github.com/user-attachments/assets/f45de4ec-8d40-40a7-ad00-a5d3801bbc80))](https://github.com/re06kan/arac-sevk-merkezi/issues/1#issue-3092021552)](https://private-user-images.githubusercontent.com/190698863/447684178-f45de4ec-8d40-40a7-ad00-a5d3801bbc80.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NDgyOTMwNjIsIm5iZiI6MTc0ODI5Mjc2MiwicGF0aCI6Ii8xOTA2OTg4NjMvNDQ3Njg0MTc4LWY0NWRlNGVjLThkNDAtNDBhNy1hZDAwLWE1ZDM4MDFiYmM4MC5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUwNTI2JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MDUyNlQyMDUyNDJaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT1lMjE3MTE5NzQ0M2EwZTliOGE3ZjRlYmM1ODViNTRhZDY3OTkyOWJmZmI5NmEwY2Y5MGExOTI5NTRiOGJkZmVmJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.xl_Dip1n6KzxU9T_GOINcKHcXFXGyIF19U_CwcKc0wU)
 
 ### Ana Sayfa
 [![Ana Sayfa](src/assets/klavuz/ana-sayfa.png)](https://github.com/re06kan/arac-sevk-merkezi/issues/2#issue-3092026220)
