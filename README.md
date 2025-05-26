@@ -11,7 +11,7 @@ Askeri ve sivil araçların görev yönetimi, araç takibi, kademe işlemleri ve
 5. [Veritabanı Kurulumu](#veritabanı-kurulumu)
 6. [Uygulamayı Çalıştırma](#uygulamayı-çalıştırma)
 7. [Offline Kullanım](#offline-kullanım)
-8. [Kullanıcı Rolleri ve Erişim](#kullanıcı-rolleri-ve-erişim)
+8. [Kullanıcı Rolleri ve Erişim Yönetimi](#kullanıcı-rolleri-ve-erişim-yönetimi)
 9. [Sistem Gereksinimleri](#sistem-gereksinimleri)
 10. [Kullanım Kılavuzu Görselleri](#kullanım-kılavuzu-görselleri)
 
@@ -109,7 +109,7 @@ npm install
 
 ## Veritabanı Kurulumu
 
-### Yeni Veritabanı Oluşturma
+### Hazır Veritabanı Yedeğinden Geri Yükleme (Önerilen Yöntem)
 
 1. PostgreSQL'i başlatın:
 ```bash
@@ -117,104 +117,32 @@ npm install
 sudo service postgresql start
 
 # Windows
-# Hizmetler üzerinden PostgreSQL hizmetini başlatın
+# Hizmetler (services.msc) üzerinden PostgreSQL hizmetini başlatın
 ```
 
-2. PostgreSQL komut satırına giriş yapın:
+2. Veritabanı Geri Yükleme:
+   - **pgAdmin 4** aracını açın
+   - Servers > PostgreSQL altında sağ tıklayıp "Create > Database" seçin
+   - Veritabanı adı olarak `arac_sevk` girin ve kaydedin
+   - Oluşturulan veritabanına sağ tıklayıp "Restore..." seçeneğini seçin
+   - Format: "Custom or tar" seçin
+   - Filename: Proje klasöründeki `db\260525.backup` dosyasını seçin
+   - Restore Options sekmesinde tüm seçenekleri işaretleyin
+   - "Restore" butonuna tıklayın
+
+3. Komut Satırından Geri Yükleme (Alternatif):
 ```bash
-psql -U postgres
+# Önce veritabanını oluşturun
+psql -U postgres -c "CREATE DATABASE arac_sevk;"
+
+# Backup dosyasını geri yükleyin
+pg_restore -U postgres -d arac_sevk "C:\work\u1\arac sevk merkezi\db\260525.backup"
 ```
 
-3. Veritabanını oluşturun:
-```sql
-CREATE DATABASE arac_sevk_db;
-```
-
-4. Veritabanına bağlanın:
-```sql
-\c arac_sevk_db
-```
-
-5. Proje dizinindeki SQL dosyalarını çalıştırın:
-```bash
-# Terminal'e dönün (PostgreSQL CLI'dan çıkın)
-psql -U postgres -d arac_sevk_db -f db/create_users_table.sql
-psql -U postgres -d arac_sevk_db -f db/create_vehicles_table.sql
-psql -U postgres -d arac_sevk_db -f db/create_drivers_table.sql
-psql -U postgres -d arac_sevk_db -f db/create_personnel_table.sql
-psql -U postgres -d arac_sevk_db -f db/create_tasks_table.sql
-psql -U postgres -d arac_sevk_db -f db/create_maintenance_table.sql
-psql -U postgres -d arac_sevk_db -f db/create_logs_table.sql
-```
-
-### Windows'ta PostgreSQL Kurulumu ve Yapılandırması
-
-1. PostgreSQL İndirme ve Kurulum:
-   - [PostgreSQL resmi sitesi](https://www.postgresql.org/download/windows/)nden en son sürümü indirin
-   - İndirilen kurulum dosyasını çalıştırın ve adımları takip edin:
-     - Kurulum dizini: `C:\Program Files\PostgreSQL\14` (sürüm numarası değişebilir)
-     - Şifrenizi belirleyin ve not alın (veritabanı yöneticisi için gerekecektir)
-     - Port: 5432 (varsayılan)
-     - Locale: Turkish, Turkey
-   - StackBuilder eklentisini kurmanız isteğe bağlıdır
-
-2. Windows Hizmetlerinde PostgreSQL'i Başlatma:
-   - Windows tuşu + R tuşlarına basın, "services.msc" yazıp Enter'a basın
-   - Listede "postgresql-x64-14" (sürüm numarası değişebilir) hizmetini bulun
-   - Hizmete sağ tıklayıp "Başlat" seçeneğini seçin
-   - Hizmetin "Çalışıyor" durumunda olduğundan emin olun
-
-3. pgAdmin Aracını Kullanma:
-   - Başlat menüsünden "pgAdmin 4" programını açın
-   - Sunucuya bağlanmak için sizden şifre istenecektir (kurulumda belirlediğiniz şifre)
-   - Bağlandıktan sonra sol panelde "Servers > PostgreSQL 14" yolunu takip edin
-
-4. Veritabanı Oluşturma (pgAdmin ile):
-   - "Databases" üzerine sağ tıklayın ve "Create > Database" seçeneğini seçin
-   - Veritabanı adı: `arac_sevk_`
-   - Owner: postgres (varsayılan)
-   - "Save" butonuna tıklayın
-
-5. Veritabanı Oluşturma (Komut Satırı ile):
-   - Windows Başlat menüsünden "SQL Shell (psql)" programını açın
-   - İstenen bilgileri girin (server, database, port, username varsayılan olarak kalabilir, şifre ise kurulum sırasında belirlediğiniz şifre)
-   - Aşağıdaki komutu yazın ve Enter'a basın:
-   ```sql
-   CREATE DATABASE arac_sevk;
-   ```
-
-### Veritabanı Yedeği ve Geri Yükleme
-
-#### Yedek Alma (Export)
-
-Mevcut veritabanının yedeğini almak için:
-
-```bash
-# Tam veritabanı yedeği (yapısal ve veri)
-pg_dump -U postgres -d arac_sevk_db > arac_sevk_backup.sql
-
-# Sadece verinin yedeği (yapı olmadan)
-pg_dump -U postgres -d arac_sevk_db --data-only > arac_sevk_data_backup.sql
-
-# Sadece yapı yedeği (veri olmadan)
-pg_dump -U postgres -d arac_sevk_db --schema-only > arac_sevk_schema_backup.sql
-```
-
-#### Yedeği Geri Yükleme (Import)
-
-Yedekten veritabanını geri yüklemek için:
-
-```bash
-# Önce boş bir veritabanı oluşturun (eğer yoksa)
-psql -U postgres -c "CREATE DATABASE arac_sevk_db;"
-
-# Tam yedeği geri yükleyin
-psql -U postgres -d arac_sevk_db < arac_sevk_backup.sql
-
-# Veya: Önce şemayı, sonra verileri yükleyin
-psql -U postgres -d arac_sevk_db < arac_sevk_schema_backup.sql
-psql -U postgres -d arac_sevk_db < arac_sevk_data_backup.sql
-```
+> **Önemli Not:** Veritabanında varsayılan olarak yönetici hesabı oluşturulmuştur:
+> - **Kullanıcı Adı:** 1111111111
+> - **Şifre:** Rekan2025.05
+> - Bu hesap super user yetkilerine sahiptir ve sistem bütünlüğü için veritabanı seviyesinde silinmeye karşı korunmaktadır.
 
 ## Uygulamayı Çalıştırma
 
@@ -249,11 +177,25 @@ npm start
 
 3. Tarayıcınızda `http://localhost:3000` adresine gidin.
 
+### Hızlı Başlatma (Windows için)
+
+Proje klasöründe bulunan `start-app.bat` dosyası, uygulamayı tek tıklamayla başlatmak için tasarlanmıştır:
+
+1. Windows Dosya Gezgininde `start-app.bat` dosyasına çift tıklayın
+2. Bat dosyası otomatik olarak:
+   - Backend Node.js sunucusunu ayrı bir komut penceresi içinde başlatır
+   - PostgreSQL veritabanı bağlantısını kontrol eder
+   - 3 saniye bekleyerek sunucunun hazır olmasını sağlar
+   - Varsayılan web tarayıcınızda uygulamayı açar (http://localhost:3000)
+   - Kapanmaması için kullanıcıdan onay bekler
+
+Bu batch dosyası, özellikle teknik bilgisi olmayan kullanıcıların sistemi kolayca başlatabilmesi için geliştirilmiştir.
+
 ## Offline Kullanım
 
 Araç Sevk Merkezi uygulaması, internet bağlantısı olmayan ortamlarda da çalışacak şekilde tasarlanmıştır. Offline kullanım için:
 
-1. **Yerel Sunucu Kurulumu**: 
+1. **Yerel Sunucu Kurulumu**:
    - Uygulamanın çalışacağı bilgisayara Node.js, PostgreSQL kurun
    - Backend ve frontend kodlarını bu bilgisayara aktarın
    - Veritabanını kurun ve gerekli tabloları oluşturun
@@ -281,22 +223,37 @@ Araç Sevk Merkezi uygulaması, internet bağlantısı olmayan ortamlarda da ça
      };
      ```
 
-## Kullanıcı Rolleri ve Erişim
+## Kullanıcı Rolleri ve Erişim Yönetimi
 
-Sistemde iki temel kullanıcı rolü bulunur:
+Sistemde, ihtiyaçlara göre özelleştirilmiş dört farklı kullanıcı rolü bulunmaktadır:
 
-### Admin
-- Tüm modüllere tam erişim
-- Kullanıcı yönetimi
-- Araç kayıt ve düzenleme
-- Sürücü kayıt ve düzenleme
-- Raporlama
-- Sistem ayarları
+### Super User (Sistem Yöneticisi)
+- Tüm modüllere ve ayarlara tam erişim
+- Kullanıcı oluşturma, düzenleme ve yetkilendirme
+- Sistem konfigürasyonu ve veritabanı yönetimi
+- Log kayıtlarını görüntüleme ve dışa aktarma
+- Yedekleme ve geri yükleme işlemleri
+- **Not:** Bu rol, varsayılan olarak sistemde bulunan ve silinemeyen `1111111111` kullanıcısına atanmıştır
 
-### Kullanıcı
-- Görev oluşturma ve takip
-- Araç durumlarını görüntüleme
-- Görev raporlama
+### Admin (Yönetici)
+- Araç ve personel kayıtlarını oluşturma/düzenleme
+- Tüm görevleri ve kademe işlemlerini yönetme
+- Raporları görüntüleme ve dışa aktarma
+- Standart kullanıcı hesaplarını yönetme
+
+### Supervisor (Denetleyici)
+- Görev atama ve onaylama
+- Araç ve personel bilgilerini görüntüleme
+- Raporları görüntüleme ve filtreleme
+- Kademe işlemlerini başlatma ve takip etme
+
+### Operator (Operatör)
+- Görevleri görüntüleme ve güncelleme
+- Kendisine atanan araçlar için işlemler yapma
+- Temel raporları görüntüleme
+- Kendi kullanıcı bilgilerini güncelleme
+
+Her kullanıcı rolü, Angular Router Guards ve JWT payload doğrulaması ile güvence altına alınmıştır. Yetkisiz erişim denemeleri engellenmekte ve otomatik olarak loglanmaktadır.
 
 ## Sistem Gereksinimleri
 
@@ -337,4 +294,23 @@ Aşağıda sistemin temel özelliklerine ilişkin ekran görüntüleri bulunmakt
 ![Sistem Logları](src/assets/klavuz/sistem-loglari.png)
 
 > Not: Görseller, eğitim amaçlı olup gerçek verileri içermemektedir.
-````
+
+## Güvenlik ve Şifreleme
+
+Araç Sevk Merkezi, askeri ortamlarda da kullanılabilecek şekilde gelişmiş güvenlik önlemleri içermektedir:
+
+### Şifreleme ve Kimlik Doğrulama
+- Tüm kullanıcı şifreleri veritabanında **bcrypt** algoritması ile hash'lenerek saklanmaktadır
+- Hash'leme işlemi 10 tur (salt rounds) ile gerçekleştirilmekte, bu da brute-force saldırılarına karşı koruma sağlamaktadır
+- Oturum yönetimi için **JWT (JSON Web Tokens)** kullanılmakta, tokenler 24 saat sonra otomatik olarak geçersiz olmaktadır
+- API isteklerinde CSRF koruması uygulanmaktadır
+
+### Veritabanı Güvenliği
+- Kritik sistem kullanıcıları, veritabanı seviyesinde silme işlemlerine karşı **trigger** mekanizması ile korunmaktadır
+- Veritabanı bağlantıları havuzlanarak (connection pooling) yönetilmekte, bu da SQL injection saldırılarına karşı ek koruma sağlamaktadır
+- Tüm kullanıcı işlemleri, IP adresi ve zaman damgası ile birlikte loglanmaktadır
+
+### İletişim Güvenliği
+- Üretim ortamında HTTPS protokolü kullanılması önerilmektedir
+- API istekleri rate limiting ile korunmaktadır
+- Backend üzerinden proxy ile iletilen tüm istekler sanitize edilmektedir
