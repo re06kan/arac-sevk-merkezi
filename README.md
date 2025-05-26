@@ -29,12 +29,6 @@ Aşağıda sistemin temel özelliklerine ilişkin ekran görüntüleri bulunmakt
 ### Araç Kayıt İşlemleri
 ![Image](https://github.com/user-attachments/assets/ea095e0e-0a09-4c62-83e7-0f22db261643)
 
-### Görev Oluşturma
-![Image](https://github.com/user-attachments/assets/83ef1078-67b6-42e8-93ea-8e73672332c7)
-
-### Kademe İşlemleri
-![Image](https://github.com/user-attachments/assets/b169ff00-9dcb-4423-9701-4dd808b75e8a)
-
 ### Raporlar
 ![Image](https://github.com/user-attachments/assets/9eb67d8c-3974-46eb-a346-c41f1c569330)
 
