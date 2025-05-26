@@ -273,7 +273,7 @@ Her kullanıcı rolü, Angular Router Guards ve JWT payload doğrulaması ile g�
 Aşağıda sistemin temel özelliklerine ilişkin ekran görüntüleri bulunmaktadır:
 
 ### Giriş Ekranı
-![Giriş Ekranı](src/assets/klavuz/giris-ekrani.png)
+![Giriş Ekranı]([src/assets/klavuz/giris-ekrani.png](https://github.com/user-attachments/assets/f45de4ec-8d40-40a7-ad00-a5d3801bbc80))
 
 ### Ana Sayfa
 ![Ana Sayfa](src/assets/klavuz/ana-sayfa.png)
