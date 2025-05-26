@@ -1,0 +1,145 @@
+<h2 mat-dialog-title>
+  <mat-icon style="vertical-align: middle; margin-right: 5px; font-size: 18px;">build</mat-icon>
+  Kademe İşlem Detayları
+</h2>
+
+<mat-dialog-content>
+  <!-- Araç Bilgileri - Kompakt düzen - Ek bilgiler eklendi -->
+  <div class="vehicle-section">
+    <h3>Araç Bilgileri</h3>
+    <div class="info-grid">
+      <div class="info-item">
+        <span class="label">Askeri Plaka:</span>
+        <span class="value">{{data?.vehicle?.military_plate || '-'}}</span>
+      </div>
+      <div class="info-item">
+        <span class="label">Sivil Plaka:</span>
+        <span class="value">{{data?.vehicle?.civilian_plate || '-'}}</span>
+      </div>
+      <div class="info-item">
+        <span class="label">Marka/Model:</span>
+        <span class="value">{{data?.vehicle?.brand || '-'}} {{data?.vehicle?.model || '-'}}</span>
+      </div>
+      <!-- Yeni eklenen araç bilgileri -->
+      <div class="info-item">
+        <span class="label">Şasi Numarası:</span>
+        <span class="value">{{data?.vehicle?.chassis_number || '-'}}</span>
+      </div>
+      <div class="info-item">
+        <span class="label">Motor Numarası:</span>
+        <span class="value">{{data?.vehicle?.engine_number || '-'}}</span>
+      </div>
+      <div class="info-item">
+        <span class="label">Araç Cinsi:</span>
+        <span class="value">{{data?.vehicle?.type || '-'}}</span>
+      </div>
+      <div class="info-item">
+        <span class="label">Tahsis Edilen Makam:</span>
+        <span class="value">{{data?.vehicle?.assigned_authority || '-'}}</span>
+      </div>
+    </div>
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <!-- Arıza ve Bakım Bilgileri - Grid düzeni -->
+  <div class="maintenance-section">
+    <h3>Bakım Bilgileri</h3>
+    
+    <div class="info-grid-3col">
+      <div class="info-item">
+        <span class="label">Kayıt Tarihi:</span>
+        <span class="value">{{data?.maintenance?.created_at | date:'dd.MM.yyyy HH:mm'}}</span>
+      </div>
+      <div class="info-item">
+        <span class="label">Arıza Türü:</span>
+        <span class="value">{{data?.maintenance?.fault_type || '-'}}</span>
+      </div>
+      <div class="info-item">
+        <span class="label">Öncelik:</span>
+        <span class="value priority" [ngClass]="{'high-priority': data?.maintenance?.priority === 'Acil'}">
+          {{data?.maintenance?.priority || '-'}}
+        </span>
+      </div>
+      <div class="info-item">
+        <span class="label">Teknisyen:</span>
+        <span class="value">{{data?.maintenance?.technician || '-'}}</span>
+      </div>
+      <div class="info-item">
+        <span class="label">Tahmini Süre:</span>
+        <span class="value">{{data?.maintenance?.estimated_hours || '-'}} saat</span>
+      </div>
+      <div class="info-item">
+        <span class="label">Durum:</span>
+        <span class="value status" [ngClass]="{'active': data?.maintenance?.status === 'ACTIVE', 
+                                              'completed': data?.maintenance?.status === 'COMPLETED'}">
+          {{data?.maintenance?.status === 'ACTIVE' ? 'DEVAM EDİYOR' : 'TAMAMLANDI'}}
+        </span>
+      </div>
+    </div>
+
+    <!-- Arıza Açıklaması - Daha kompakt yapıldı -->
+    <div class="description-section">
+      <h4>Arıza Açıklaması</h4>
+      <div class="description-box" style="min-height: auto; padding: 4px;">
+        {{data?.maintenance?.fault_description || '-'}}
+      </div>
+    </div>
+
+    <!-- Notlar -->
+    <div class="description-section" *ngIf="data?.maintenance?.notes">
+      <h4>Notlar</h4>
+      <div class="description-box notes" style="min-height: auto; padding: 4px;">
+        {{data?.maintenance?.notes || '-'}}
+      </div>
+    </div>
+
+    <!-- Onarım Sonucu (tamamlandıysa) -->
+    <div class="repair-section" *ngIf="data?.maintenance?.status === 'COMPLETED'">
+      <h3>Onarım Bilgileri</h3>
+      
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="label">Sonuç:</span>
+          <span class="value result" [ngClass]="{
+            'success': data?.maintenance?.repair_result === 'Onarıldı',
+            'partial': data?.maintenance?.repair_result === 'Kısmen Onarıldı',
+            'failed': data?.maintenance?.repair_result === 'Onarılamadı'
+          }">
+            {{data?.maintenance?.repair_result || '-'}}
+          </span>
+        </div>
+        <div class="info-item">
+          <span class="label">Tamamlanma Tarihi:</span>
+          <span class="value">{{data?.maintenance?.end_date ? (data?.maintenance?.end_date | date:'dd.MM.yyyy HH:mm') : '-'}}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Gerçekleşen Süre:</span>
+          <span class="value">{{calculateMaintenanceDuration()}}</span>
+        </div>
+      </div>
+
+      <!-- Onarım Açıklaması -->
+      <div class="description-section">
+        <h4>Yapılan İşlem</h4>
+        <div class="description-box" style="min-height: auto; padding: 4px;">
+          {{data?.maintenance?.repair_description || '-'}}
+        </div>
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="center">
+  <button mat-raised-button color="primary" style="background-color: #ff0000 !important; color: white !important;" (click)="close()">
+    <mat-icon style="font-size: 16px;">close</mat-icon>
+    Kapat
+  </button>
+  
+  <!-- Bakım tamamlandıysa yazdırma butonu ekle - arka plan turuncu yapıldı -->
+  <button mat-raised-button (click)="print()" *ngIf="data?.maintenance?.status === 'COMPLETED'"
+          style="background-color: #ff9800 !important; color: white !important;">
+    <mat-icon style="font-size: 16px;">print</mat-icon>
+    Yazdır
+  </button>
+</mat-dialog-actions>

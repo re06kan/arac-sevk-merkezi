@@ -1,0 +1,80 @@
+<h2 mat-dialog-title class="mdc-dialog-title">Kademe Giriş İşlemi</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="kademeForm">
+    <!-- Araç Bilgileri -->
+    <div class="vehicle-info">
+      <div class="info-grid">
+        <p><strong>Askeri Plaka:</strong> {{data.vehicle?.military_plate || '-'}}</p>
+        <p><strong>Sivil Plaka:</strong> {{data.vehicle?.civilian_plate || '-'}}</p>
+        <p><strong>Marka/Model:</strong> {{data.vehicle?.brand || '-'}} {{data.vehicle?.model || '-'}}</p>
+        <p><strong>Tahsis:</strong> {{data.vehicle?.assigned_authority || '-'}}</p>
+      </div>
+    </div>
+
+    <!-- Arıza Bilgileri -->
+    <div class="fault-info">
+      <h3>Arıza Bilgileri</h3>
+      
+      <mat-form-field appearance="outline">
+        <mat-label>Arıza Türü</mat-label>
+        <mat-select formControlName="arizaTuru" required>
+          <mat-option *ngFor="let tur of arizaTurleri" [value]="tur">{{tur}}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="kademeForm.get('arizaTuru')?.hasError('required')">Arıza türü seçilmelidir</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Öncelik</mat-label>
+        <mat-select formControlName="oncelik" required>
+          <mat-option *ngFor="let oncelik of oncelikler" [value]="oncelik">{{oncelik}}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="kademeForm.get('oncelik')?.hasError('required')">Öncelik seçilmelidir</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Sorumlu Teknisyen</mat-label>
+        <input matInput formControlName="sorumluTeknisyen" 
+               placeholder="Teknisyen adını giriniz"
+               (input)="toUpperCase($event)"
+               (keypress)="onlyLetters($event)"
+               required
+               maxlength="50">
+        <mat-error *ngIf="kademeForm.get('sorumluTeknisyen')?.hasError('required')">Teknisyen adı girilmelidir</mat-error>
+        <mat-error *ngIf="kademeForm.get('sorumluTeknisyen')?.hasError('minlength')">En az 3 karakter girilmelidir</mat-error>
+        <mat-error *ngIf="kademeForm.get('sorumluTeknisyen')?.hasError('pattern')">Sadece harf giriniz</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Tahmini Süre (Saat)</mat-label>
+        <input matInput type="number" formControlName="tahminiSure" required>
+        <mat-error *ngIf="kademeForm.get('tahminiSure')?.hasError('required')">Tahmini süre girilmelidir</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Arıza Açıklaması</mat-label>
+        <textarea matInput formControlName="arizaAciklama" rows="3" required maxlength="250"></textarea>
+        <mat-error *ngIf="kademeForm.get('arizaAciklama')?.hasError('required')">Arıza açıklaması girilmelidir</mat-error>
+        <mat-hint align="end">{{kademeForm.get('arizaAciklama')?.value?.length || 0}}/250</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Notlar</mat-label>
+        <textarea matInput formControlName="notlar" rows="2" placeholder="Opsiyonel notlar..." maxlength="200"></textarea>
+        <mat-hint align="end">{{kademeForm.get('notlar')?.value?.length || 0}}/200</mat-hint>
+      </mat-form-field>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-raised-button color="warn" (click)="onCancel()" 
+          style="background-color: #f44336 !important; color: white !important;">
+    İptal
+  </button>
+  <button mat-raised-button color="primary" (click)="onSubmit()" 
+          [disabled]="kademeForm.invalid"
+          style="background-color: #4caf50 !important; color: white !important;">
+    Kaydet
+  </button>
+</mat-dialog-actions>

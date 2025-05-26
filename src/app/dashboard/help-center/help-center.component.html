@@ -1,0 +1,68 @@
+<div class="help-center-container">
+  <div class="header-section">
+    <h1 class="page-title">
+      <mat-icon>help</mat-icon>
+      Yardım Merkezi
+    </h1>
+    
+    <mat-card class="welcome-card">
+      <mat-card-content>
+        <div class="welcome-message">
+          <h2>Yardım Merkezi'ne Hoş Geldiniz</h2>
+          <p>Bu sayfada sistem kullanımıyla ilgili sık sorulan soruları bulabilirsiniz.</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Tüm kullanıcılar tarafından görülebilen kategoriler -->
+  <h2 class="section-title">Genel Yardım</h2>
+  <div class="category-grid">
+    <!-- Her kategori için grid item -->
+    <div *ngFor="let category of helpCategories" class="category-card">
+      <div class="category-header">
+        <mat-icon>{{category.icon}}</mat-icon>
+        <h2>{{category.title}}</h2>
+      </div>
+
+      <!-- Soru-cevap panelleri -->
+      <mat-accordion class="faq-accordion" multi>
+        <mat-expansion-panel *ngFor="let faq of category.faqs">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <span class="question-text">{{faq.question}}</span>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          
+          <!-- Cevap HTML olarak render edilecek -->
+          <div class="faq-answer" [innerHTML]="faq.answer"></div>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+  </div>
+
+  <!-- Sadece admin rolüne sahip kullanıcılar tarafından görülebilen kategoriler -->
+  <ng-container *ngIf="isAdmin">
+    <h2 class="section-title">Yönetici İşlemleri</h2>
+    <div class="category-grid">
+      <div *ngFor="let category of adminHelpCategories" class="category-card admin-category">
+        <div class="category-header">
+          <mat-icon>{{category.icon}}</mat-icon>
+          <h2>{{category.title}}</h2>
+        </div>
+
+        <mat-accordion class="faq-accordion" multi>
+          <mat-expansion-panel *ngFor="let faq of category.faqs">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <span class="question-text">{{faq.question}}</span>
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            
+            <div class="faq-answer" [innerHTML]="faq.answer"></div>
+          </mat-expansion-panel>
+        </mat-accordion>
+      </div>
+    </div>
+  </ng-container>
+</div>

@@ -1,0 +1,171 @@
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  
+  // Overlay background color - daha hafif bir overlay için opaklığı azalttım
+  background-color: rgba(25, 118, 210, 0.15); // Daha hafif transparent blue overlay
+  
+  // Background image with blur - yolu düzeltildi
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('/assets/arac_sevk.png'); // Düzeltilmiş yol
+    background-size: cover; // Resmin tüm container'ı kaplamasını sağlar
+    background-position: center; // Resmi merkezde tutar
+    background-repeat: no-repeat;
+    filter: blur(8px); // Blur efekti eklendi - orta seviye bulanıklık
+    z-index: -1; // Arkada tutarak içeriğin önde olmasını sağlar
+    transform: scale(1.05); // Kenarlardan oluşabilecek beyaz boşlukları önlemek için
+  }
+}
+
+.login-card {
+  width: 100%;
+  max-width: 400px;
+  padding: 32px;
+  border-radius: 12px;
+  background-color: rgba(255, 255, 255, 0.95); // Slightly transparent white
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  position: relative; // Ensure it's above the blurred background
+  z-index: 1;
+  
+  h1 {
+    color: #1976d2;
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 0 0 12px 0;
+    text-align: center;
+  }
+  
+  h2 {
+    color: #333;
+    font-size: 1.4rem;
+    font-weight: 500;
+    margin: 0 0 24px 0;
+    text-align: center;
+  }
+  
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    
+    mat-form-field {
+      width: 100%;
+    }
+    
+    button {
+      height: 48px;
+      font-size: 1rem;
+      font-weight: 500;
+      margin-top: 16px;
+      background-color: #4caf50 !important; // Arka planla uyumlu yeşil renk
+      color: white !important;
+      
+      &:hover {
+        background-color: #3d8b40 !important; // Hover durumu için daha koyu yeşil
+      }
+      
+      &:disabled {
+        background-color: rgba(0, 0, 0, 0.12) !important;
+        color: rgba(0, 0, 0, 0.38) !important;
+      }
+    }
+    
+    button[type="submit"] {
+      height: 48px;
+      font-size: 1rem;
+      font-weight: 500;
+      margin-top: 16px;
+      background-color: #4caf50 !important; // Yeşil arka plan
+      color: white !important;
+      
+      &:hover {
+        background-color: #3d8b40 !important; // Hover durumu için daha koyu yeşil
+      }
+      
+      &:disabled {
+        background-color: rgba(0, 0, 0, 0.12) !important;
+        color: rgba(0, 0, 0, 0.38) !important;
+      }
+    }
+  }
+}
+
+// Şifre görünürlük ikonu için özel sınıf
+.password-visibility-icon {
+  color: #000000; // Şifre görünürlük ikonu için siyah renk
+  
+  &.visibility-toggle {
+    cursor: pointer; // Tıklanabilir olduğunu göstermek için
+    user-select: none; // Metni seçilemez yaparak kullanıcı deneyimini iyileştir
+  }
+}
+
+// Eski renkli göz stillerini kaldır (veya yorum satırına al)
+/*
+.status-active {
+  color: #4caf50; // yeşil
+}
+
+.status-inactive {
+  color: #f44336; // kırmızı
+}
+*/
+
+// Snackbar hata mesajları için stil (::ng-deep kullanarak global stile erişim)
+::ng-deep .error-snackbar {
+  background: #f44336 !important; // Kırmızı arka plan
+  color: white !important;
+  
+  .mat-mdc-snack-bar-actions .mdc-button__label {
+    color: white !important;
+    font-weight: 500;
+  }
+}
+
+::ng-deep .success-snackbar {
+  background: #4caf50 !important; // Yeşil arka plan 
+  color: white !important;
+  
+  .mat-mdc-snack-bar-actions .mdc-button__label {
+    color: white !important;
+    font-weight: 500;
+  }
+}
+
+// Copyright metni için stil
+.copyright-text {
+  position: absolute;
+  bottom: 20px;
+  width: 100%;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+  font-weight: 300;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  z-index: 1;
+}
+
+@media (max-width: 480px) {
+  .login-card {
+    padding: 24px;
+    margin: 16px;
+    
+    h1 {
+      font-size: 1.5rem;
+    }
+    
+    h2 {
+      font-size: 1.2rem;
+    }
+  }
+}

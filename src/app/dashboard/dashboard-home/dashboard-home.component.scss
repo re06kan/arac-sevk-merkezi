@@ -1,0 +1,342 @@
+.dashboard-content {
+  padding: 24px;
+
+  .top-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    margin-bottom: 24px;
+
+    .search-section {
+      flex: 1;
+      min-width: 300px;
+
+      mat-form-field {
+        width: 100%;
+      }
+    }
+
+    .total-vehicles {
+      flex: 2;
+      min-width: 500px;
+
+      mat-card {
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+        .vehicle-stats {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 16px;
+          justify-content: space-around;
+
+          .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 12px;
+            border-radius: 8px;
+            min-width: 100px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+
+            &:hover {
+              transform: translateY(-2px);
+              box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            &.selected {
+              transform: translateY(-2px);
+              box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+
+              &::after {
+                content: '';
+                position: absolute;
+                bottom: -8px;
+                left: 25%;
+                width: 50%;
+                height: 3px;
+                border-radius: 2px;
+                background-color: currentColor;
+              }
+
+              &.available::after {
+                background-color: #4caf50;
+              }
+
+              &.busy::after {
+                background-color: #f44336;
+              }
+
+              &.uzun-yol::after {
+                background-color: #2196f3;
+              }
+
+              &.maintenance::after {
+                background-color: #ff9800;
+              }
+            }
+
+            mat-icon {
+              margin-bottom: 8px;
+              color: #666;
+            }
+
+            span {
+              font-weight: 500;
+              color: #333;
+            }
+
+            &.available {
+              mat-icon {
+                color: #4caf50;
+              }
+            }
+
+            &.busy {
+              mat-icon {
+                color: #f44336;
+              }
+            }
+
+            &.uzun-yol {
+              mat-icon {
+                color: #2196f3;
+              }
+            }
+
+            &.maintenance {
+              mat-icon {
+                color: #ff9800;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .vehicle-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); // Her satırda tam olarak 5 araç
+    gap: 24px;
+    margin-bottom: 24px;
+
+    .vehicle-button {
+      height: auto;
+      padding: 0;
+      border-radius: 12px;
+      overflow: hidden;
+      display: block;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+      &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+      }
+
+      &.musait {
+        background-color: #e8f5e9;
+        border-left: 6px solid #4caf50;
+      }
+
+      &.gorevde {
+        background-color: #ffebee;
+        border-left: 6px solid #f44336;
+      }
+
+      &.kademede {
+        background-color: #fff3e0;
+        border-left: 6px solid #ff9800;
+      }
+
+      &.uzun-yol {
+        background-color: #e3f2fd;
+        border-left: 6px solid #2196f3;
+      }
+
+      &.view-only {
+        cursor: default !important;
+        opacity: 0.9;
+        
+        &:hover {
+          transform: none !important;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+        }
+        
+        &:after {
+          content: "(Sadece görüntüleme)";
+          font-size: 11px;
+          position: absolute;
+          bottom: 5px;
+          right: 5px;
+          color: #666;
+        }
+      }
+
+      .vehicle-content {
+        padding: 16px;
+
+        .header-section {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          margin-bottom: 12px;
+
+          .plate-section {
+            .military-plate {
+              font-size: 1.2rem;
+              font-weight: 600;
+              color: #333;
+            }
+
+            .civilian-plate {
+              font-size: 0.9rem;
+              color: #666;
+              margin-top: 4px;
+            }
+          }
+
+          .status-chip {
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 0.85rem;
+            font-weight: 500;
+
+            &.musait {
+              background-color: rgba(76, 175, 80, 0.2);
+              color: #2e7d32;
+            }
+
+            &.gorevde {
+              background-color: rgba(244, 67, 54, 0.2);
+              color: #c62828;
+            }
+
+            &.kademede {
+              background-color: rgba(255, 152, 0, 0.2);
+              color: #ef6c00;
+            }
+
+            &.uzun-yol {
+              background-color: rgba(33, 150, 243, 0.2);
+              color: #1565c0;
+            }
+          }
+        }
+
+        .task-details {
+          margin-top: 8px;
+          padding-top: 8px;
+          border-top: 1px solid rgba(0, 0, 0, 0.1);
+
+          .details-row {
+            display: flex;
+            align-items: center;
+            font-size: 0.75rem;
+            color: #666;
+
+            .driver,
+            .authority {
+              display: flex;
+              align-items: center;
+
+              mat-icon {
+                font-size: 14px;
+                height: 14px;
+                width: 14px;
+                margin-right: 2px;
+              }
+            }
+
+            .separator {
+              margin: 0 4px;
+              color: #999;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .ghm-info-box {
+    background-color: #e3f2fd;
+    border-left: 4px solid #2196f3;
+    padding: 10px 16px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    
+    mat-icon {
+      color: #2196f3;
+      margin-right: 10px;
+    }
+    
+    span {
+      color: #0d47a1;
+      font-size: 0.9rem;
+    }
+  }
+
+  .no-vehicles {
+    background-color: #fff3e0;
+    border-left: 4px solid #ff9800;
+    padding: 16px;
+    margin: 20px 0;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    mat-icon {
+      color: #ff9800;
+      margin-right: 10px;
+    }
+    
+    span {
+      color: #e65100;
+    }
+  }
+
+  mat-paginator {
+    margin-top: 12px;
+    background: transparent;
+  }
+}
+
+@media screen and (max-width: 1200px) {
+  .vehicle-grid {
+    grid-template-columns: repeat(4, 1fr); // Daha küçük ekranlarda 4 araç
+  }
+}
+
+@media screen and (max-width: 960px) {
+  .top-section {
+    flex-direction: column;
+
+    .search-section,
+    .total-vehicles {
+      min-width: 100% !important;
+    }
+  }
+
+  .vehicle-grid {
+    grid-template-columns: repeat(3, 1fr); // Daha da küçük ekranlarda 3 araç
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .vehicle-grid {
+    grid-template-columns: repeat(2, 1fr); // Tablet ekranlarda 2 araç
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .vehicle-grid {
+    grid-template-columns: 1fr; // Mobil ekranlarda 1 araç
+  }
+}

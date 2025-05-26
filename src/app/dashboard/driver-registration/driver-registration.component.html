@@ -1,0 +1,188 @@
+<div class="driver-registration-container">
+  <div class="form-section">
+    <h2>Sürücü Kayıt Formu</h2>
+    <form [formGroup]="driverForm" (ngSubmit)="onSubmit()">
+      <!-- İlk satır: TC, Ad Soyad ve Telefon aynı satırda -->
+      <div class="field-row">
+        <mat-form-field appearance="outline">
+          <mat-label>TC Kimlik No</mat-label>
+          <input matInput 
+                 formControlName="tc" 
+                 placeholder="TC kimlik no giriniz"
+                 pattern="[0-9]*"
+                 maxlength="11"
+                 minlength="11"
+                 (keypress)="onlyNumbers($event)">
+          <mat-error *ngIf="driverForm.get('tc')?.errors?.['required']">TC kimlik no zorunludur</mat-error>
+          <mat-error *ngIf="driverForm.get('tc')?.errors?.['pattern']">Sadece rakam giriniz</mat-error>
+          <mat-error *ngIf="driverForm.get('tc')?.errors?.['minlength'] || driverForm.get('tc')?.errors?.['maxlength']">TC kimlik no 11 karakter olmalıdır</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Ad Soyad</mat-label>
+          <input matInput 
+                 formControlName="name" 
+                 placeholder="Ad soyad giriniz"
+                 (input)="toUpperCase($event)"
+                 maxlength="25"
+                 style="text-transform: uppercase;">
+          <mat-error *ngIf="driverForm.get('name')?.errors?.['required']">Ad soyad zorunludur</mat-error>
+          <mat-error *ngIf="driverForm.get('name')?.errors?.['pattern']">Sadece harf giriniz</mat-error>
+          <mat-error *ngIf="driverForm.get('name')?.errors?.['maxlength']">En fazla 25 karakter girebilirsiniz</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Telefon</mat-label>
+          <input matInput 
+                 formControlName="phone" 
+                 placeholder="(5XX) XXX XX XX"
+                 (input)="formatPhoneNumber($event)"
+                 (keypress)="onlyNumbers($event)"
+                 maxlength="14">
+          <mat-error *ngIf="driverForm.get('phone')?.errors?.['required']">Telefon zorunludur</mat-error>
+          <mat-error *ngIf="driverForm.get('phone')?.errors?.['pattern']">Geçerli bir telefon numarası giriniz</mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- İkinci satırda kalan alanlar -->
+      <div class="field-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Rütbe</mat-label>
+          <input matInput 
+                 formControlName="rutbe" 
+                 placeholder="Rütbe giriniz"
+                 (input)="toUpperCase($event)"
+                 maxlength="25"
+                 style="text-transform: uppercase;">
+          <mat-error *ngIf="driverForm.get('rutbe')?.errors?.['required']">Rütbe zorunludur</mat-error>
+          <mat-error *ngIf="driverForm.get('rutbe')?.errors?.['pattern']">Sadece harf giriniz</mat-error>
+          <mat-error *ngIf="driverForm.get('rutbe')?.errors?.['maxlength']">En fazla 25 karakter girebilirsiniz</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Sicil No</mat-label>
+          <input matInput 
+                 formControlName="sicil_no" 
+                 placeholder="Sicil no giriniz"
+                 pattern="[0-9A-Za-z/]*"
+                 maxlength="10">
+          <mat-error *ngIf="driverForm.get('sicil_no')?.errors?.['required']">Sicil no zorunludur</mat-error>
+          <mat-error *ngIf="driverForm.get('sicil_no')?.errors?.['maxlength']">En fazla 10 karakter girebilirsiniz</mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="field-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Doğum Tarihi</mat-label>
+          <input matInput formControlName="birthday" [matDatepicker]="picker" placeholder="Doğum tarihi seçiniz">
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+          <mat-error *ngIf="driverForm.get('birthday')?.errors?.['required']">Doğum tarihi zorunludur</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Doğum Yeri</mat-label>
+          <input matInput 
+                 formControlName="birth_place" 
+                 placeholder="Doğum yeri giriniz"
+                 (input)="toUpperCase($event)"
+                 maxlength="25"
+                 pattern="[A-Za-zğüşıöçĞÜŞİÖÇ ]*"
+                 style="text-transform: uppercase;">
+          <mat-error *ngIf="driverForm.get('birth_place')?.errors?.['required']">Doğum yeri zorunludur</mat-error>
+          <mat-error *ngIf="driverForm.get('birth_place')?.errors?.['pattern']">Sadece harf giriniz</mat-error>
+          <mat-error *ngIf="driverForm.get('birth_place')?.errors?.['maxlength']">En fazla 25 karakter girebilirsiniz</mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="button-group">
+        <button mat-raised-button color="primary" type="submit" [disabled]="driverForm.invalid" *ngIf="!isEditMode">
+          Kaydet
+        </button>
+        <button mat-raised-button color="primary" type="button" class="update-button" [disabled]="driverForm.invalid" *ngIf="isEditMode" (click)="updateDriver()">
+          Güncelle
+        </button>
+        <button mat-raised-button color="warn" type="button" *ngIf="isEditMode" (click)="isEditMode = false; driverForm.reset()">
+          İptal
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="table-section">
+    <h2>Sürücü Listesi</h2>
+    <mat-form-field>
+      <mat-label>Filtrele</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Arama yapın..." #input>
+    </mat-form-field>
+
+    <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+      <ng-container matColumnDef="tc">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: bold;">TC Kimlik No</th>
+        <td mat-cell *matCellDef="let driver">{{driver.tc}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: bold;">Ad Soyad</th>
+        <td mat-cell *matCellDef="let driver">{{driver.name}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="phone">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: bold;">Telefon</th>
+        <td mat-cell *matCellDef="let driver">{{driver.phone}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="rutbe">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: bold;">Rütbe</th>
+        <td mat-cell *matCellDef="let driver">{{driver.rutbe}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="sicil_no">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: bold;">Sicil No</th>
+        <td mat-cell *matCellDef="let driver">{{driver.sicil_no}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="birthday">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: bold;">Doğum Tarihi</th>
+        <td mat-cell *matCellDef="let driver">{{driver.birthday | date:'dd.MM.yyyy'}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="birth_place">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: bold;">Doğum Yeri</th>
+        <td mat-cell *matCellDef="let driver">{{driver.birth_place}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="create_date">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: bold;">Kayıt Tarihi</th>
+        <td mat-cell *matCellDef="let driver">{{driver.create_date | date:'dd.MM.yyyy HH:mm'}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="visibility">
+        <th mat-header-cell *matHeaderCellDef style="font-weight: bold;">Durum</th>
+        <td mat-cell *matCellDef="let driver">
+          <button mat-icon-button (click)="toggleVisibility(driver)">
+            <mat-icon [ngClass]="{'status-active': driver.visibility === 0, 'status-inactive': driver.visibility === 1}">
+              {{driver.visibility === 0 ? 'visibility' : 'visibility_off'}}
+            </mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef style="font-weight: bold;">İşlemler</th>
+        <td mat-cell *matCellDef="let driver">
+          <button mat-icon-button class="edit-button" (click)="editDriver(driver)" matTooltip="Düzenle">
+            <mat-icon>edit</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+    <mat-paginator [pageSize]="13"
+                   [pageSizeOptions]="[5, 10, 25, 100]"
+                   aria-label="Sayfa seçin">
+    </mat-paginator>
+  </div>
+</div>

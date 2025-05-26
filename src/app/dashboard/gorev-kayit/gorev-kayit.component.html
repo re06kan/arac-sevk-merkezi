@@ -1,0 +1,332 @@
+<div class="gorev-kayit-container">
+  <!-- Hata durumu gösterimi -->
+  <div *ngIf="hasError" class="error-message">
+    <mat-icon>error</mat-icon>
+    <span>{{errorMessage}}</span>
+    <p>Ana sayfaya yönlendiriliyorsunuz...</p>
+  </div>
+
+  <!-- Mevcut içerik -->
+  <div class="vehicle-info" *ngIf="vehicle && !hasError">
+    <div class="vehicle-header">
+      <div class="header-status">
+        <h2>🚗 Araç Görev Kaydı</h2>
+        <mat-chip-set>
+          <mat-chip [ngStyle]="{
+            'background-color': getStatusColor(),
+            'color': 'white'
+          }">
+            Görev Durumu: {{gorevDurumu}}
+          </mat-chip>
+        </mat-chip-set>
+      </div>
+      <div class="vehicle-details">
+        <p><strong>Askeri Plaka</strong> {{vehicle.military_plate}}</p>
+        <p><strong>Sivil Plaka</strong> {{vehicle.civilian_plate}}</p>
+        <p><strong>Marka/Model</strong> {{vehicle.brand}} {{vehicle.model}}</p>
+        <p><strong>Araç Tipi</strong> {{vehicle.type}}</p>
+        <p><strong>Tahsis</strong> {{vehicle.assigned_authority}}</p>
+      </div>
+    </div>
+
+    <form [formGroup]="gorevForm" (ngSubmit)="onSubmit()">
+      <div class="form-grid">
+        <!-- İlk Satır -->
+        <mat-form-field appearance="outline">
+          <mat-label>Araç Plakası</mat-label>
+          <input matInput formControlName="aracPlakasi" [value]="vehicle?.military_plate">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Sürücü</mat-label>
+          <input matInput
+                 [formControl]="driverSearchControl"
+                 placeholder="Sürücü ara..."
+                 [disabled]="isKademeMode()"
+                 [matAutocomplete]="driverAuto">
+          <mat-autocomplete #driverAuto="matAutocomplete" 
+                          (optionSelected)="onDriverSelected($event)"
+                          [displayWith]="displayDriverFn">
+            <mat-option *ngFor="let driver of filteredDrivers$ | async" [value]="driver">
+              {{driver.rutbe}} - {{driver.name}}
+            </mat-option>
+          </mat-autocomplete>
+          <mat-hint *ngIf="activeTask">
+            {{isKademeMode() ? 'Kademe işlemi sırasında değiştirilemez' : 'Aktif görevde sürücü değiştirilemez'}}
+          </mat-hint>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Tahsisli Makam</mat-label>
+          <input matInput
+                 [formControl]="personnelSearchControl"
+                 [readonly]="!!activeTask || isKademeMode()"
+                 [disabled]="!!activeTask || isKademeMode()"
+                 placeholder="Personel ara..."
+                 [matAutocomplete]="personnelAuto">
+          <mat-autocomplete #personnelAuto="matAutocomplete" 
+                          (optionSelected)="onPersonnelSelected($event)"
+                          [displayWith]="displayPersonnelFn">
+            <mat-option *ngFor="let person of filteredPersonnel$ | async" [value]="person">
+              {{person.rank}} - {{person.name}}
+            </mat-option>
+          </mat-autocomplete>
+          <mat-hint *ngIf="activeTask">
+            {{isKademeMode() ? 'Kademe işlemi sırasında değiştirilemez' : 'Aktif görevde makam değiştirilemez'}}
+          </mat-hint>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Emriden Gidilecek Şahıs</mat-label>
+          <input matInput formControlName="emirVeren"
+                 (input)="toUpperCase($event)"
+                 (keypress)="onlyLetters($event)"
+                 [disabled]="isKademeMode()"
+                 maxlength="25"
+                 style="text-transform: uppercase;">
+          <mat-hint *ngIf="isKademeMode()">Kademe işlemi sırasında değiştirilemez</mat-hint>
+        </mat-form-field>
+
+        <!-- İkinci Satır -->
+        <mat-form-field appearance="outline">
+          <mat-label>Görev Kağıt No</mat-label>
+          <input matInput formControlName="gorevKagitNo" 
+                 [disabled]="isKademeMode()"
+                 maxlength="15">
+          <mat-hint *ngIf="isKademeMode()">Kademe işlemi sırasında değiştirilemez</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Gidilen Güzergah</mat-label>
+          <textarea matInput formControlName="gidilenGuzergah" 
+                    rows="2" 
+                    [disabled]="isKademeMode()" 
+                    maxlength=""></textarea>
+          <mat-hint *ngIf="isKademeMode()">Kademe işlemi sırasında değiştirilemez</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Çıkış KM</mat-label>
+          <input matInput type="number" formControlName="cikisKm"
+                 [disabled]="gorevForm.get('cikisKm')?.disabled || isKademeMode()"
+                 [placeholder]="gorevForm.get('cikisKm')?.disabled ? 'Önceki görevden otomatik alındı' : 'Çıkış KM giriniz'">
+          <mat-hint *ngIf="activeTask">
+            {{isKademeMode() ? 'Kademe işlemi sırasında değiştirilemez' : 'Aktif görevde çıkış KM değiştirilemez'}}
+          </mat-hint>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Geliş KM</mat-label>
+          <input matInput type="number" formControlName="gelisKm"
+                 [disabled]="isKademeMode()"
+                 [placeholder]="activeTask ? 'Geliş KM giriniz' : 'Görev kapatılırken girilebilir'">
+          <mat-hint *ngIf="activeTask">
+            {{isKademeMode() ? 'Kademe işlemi sırasında değiştirilemez' : 'Görev kapatmak için geliş KM\'sini giriniz'}}
+          </mat-hint>
+          <mat-hint *ngIf="!activeTask">Geliş KM sadece görev kapatılırken girilebilir</mat-hint>
+        </mat-form-field>
+
+        <!-- Üçüncü Satır -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Dönüş Mesajı</mat-label>
+          <textarea matInput formControlName="donusMesaji" 
+                    rows="2"
+                    [disabled]="isKademeMode()"
+                    [placeholder]="activeTask ? 'Dönüş mesajınızı giriniz' : 'Önce görev açmalısınız'"
+                    maxlength="200">
+          </textarea>
+          <mat-hint *ngIf="activeTask">
+            {{isKademeMode() ? 'Kademe işlemi sırasında değiştirilemez' : 'Görev ile ilgili dönüş notlarını girebilirsiniz'}}
+          </mat-hint>
+          <mat-hint align="end" *ngIf="!isKademeMode()">{{gorevForm.get('donusMesaji')?.value?.length || 0}}/200</mat-hint>
+        </mat-form-field>
+
+      </div>
+
+      <div class="button-group">
+        <button mat-raised-button color="primary" type="button" (click)="gorevAc()" 
+                [disabled]="gorevDurumu === GorevDurumu.ACIK || 
+                           gorevDurumu === GorevDurumu.UZUN_YOL || 
+                           gorevDurumu === GorevDurumu.KADEMEDE || 
+                           activeTask || !gorevForm.valid"
+                style="background-color: green !important; color: white !important;">
+          <mat-icon>play_arrow</mat-icon>
+          Görev Aç
+        </button>
+        <button mat-raised-button color="primary" type="button" (click)="uzunYol()"
+                [disabled]="gorevDurumu === GorevDurumu.ACIK || 
+                           gorevDurumu === GorevDurumu.UZUN_YOL || 
+                           gorevDurumu === GorevDurumu.KADEMEDE || 
+                           activeTask || !gorevForm.valid"
+                style="background-color: #2196F3 !important; color: white !important;">
+          <mat-icon>alt_route</mat-icon>
+          Uzun Yol
+        </button>
+        <button mat-raised-button color="warn" type="button" (click)="gorevKapat()"
+                [disabled]="gorevDurumu === GorevDurumu.KAPALI || 
+                           !activeTask || 
+                           !gorevForm.get('gelisKm')?.value ||
+                           gorevForm.get('gelisKm')?.value <= gorevForm.get('cikisKm')?.value"
+                style="background-color: #f44336 !important; color: white !important;">
+          <mat-icon>stop</mat-icon>
+          Görev Kapat
+        </button>
+        <button mat-raised-button color="accent" type="button" (click)="kademeGiris()"
+                [disabled]="!canEnterMaintenance()"
+                style="background-color: #ff9800 !important; color: white !important;">
+          <mat-icon>engineering</mat-icon>
+          Kademe Giriş
+        </button>
+        <button mat-raised-button color="accent" type="button" (click)="kademeCikis()"
+                [disabled]="!isGorevDurumu(GorevDurumu.KADEMEDE) || 
+                           !activeTask"
+                style="background-color: #ff9800 !important; color: white !important;">
+          <mat-icon>exit_to_app</mat-icon>
+          Kademe Çıkış
+        </button>
+      </div>
+
+      <!-- Görev Geçmişi Tablosu -->
+      <div class="task-history">
+        <h3>Araç Görev Geçmişi</h3>
+        
+        <table mat-table [dataSource]="taskHistory" class="mat-elevation-z8" *ngIf="taskHistory.length > 0">
+          <!-- Tarih Kolonu -->
+          <ng-container matColumnDef="created_at">
+            <th mat-header-cell *matHeaderCellDef  style="font-weight: bold;"> Çıkış Tarih</th>
+            <td mat-cell *matCellDef="let task">{{task.created_at | date:'dd.MM.yyyy HH:mm'}}</td>
+          </ng-container>
+
+          <!-- Durum Kolonu -->
+          <ng-container matColumnDef="task_status">
+            <th mat-header-cell *matHeaderCellDef style="font-weight: bold;">Durum</th>
+            <td mat-cell *matCellDef="let task">
+              <div class="status-container">
+                <span class="task-status" 
+                      [ngClass]="{
+                        'kapali': task.task_status === 'KAPALI' && task.task_type !== 'UZUN_YOL',
+                        'acik': task.task_status === 'ACIK',
+                        'kademede': task.task_status === 'KADEMEDE',
+                        'uzun-yol': task.task_status === 'UZUN_YOL',
+                        'uzun-yol-closed': isUzunYolClosed(task)
+                      }">
+                  {{task.task_status}}
+                </span>
+                <small class="task-type" *ngIf="task.task_type">
+                  {{task.task_type === 'UZUN_YOL' ? '(Uzun Yol)' : ''}}
+                </small>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Bakım Detayları Kolonu (Yeni Eklendi) -->
+          <ng-container matColumnDef="maintenance_details">
+            <th mat-header-cell *matHeaderCellDef style="font-weight: bold;">Bakım</th>
+            <td mat-cell *matCellDef="let task" class="maintenance-column">
+              <button *ngIf="task.maintenance_id" 
+                      mat-mini-fab 
+                      color="accent" 
+                      class="maintenance-button"
+                      (click)="showMaintenanceDetails(task); $event.stopPropagation();"
+                      matTooltip="Kademe detaylarını göster">
+                <mat-icon>build</mat-icon>
+              </button>
+              <span *ngIf="!task.maintenance_id" class="no-maintenance">-</span>
+            </td>
+          </ng-container>
+
+          <!-- Sürücü Bilgisi -->
+          <ng-container matColumnDef="driver_info">
+            <th mat-header-cell *matHeaderCellDef  style="font-weight: bold;">Sürücü</th>
+            <td mat-cell *matCellDef="let task">
+              {{task.driver_name}} ({{task.driver_rank}})
+            </td>
+          </ng-container>
+
+          <!-- Tahsisli Makam -->
+          <ng-container matColumnDef="authority_info">
+            <th mat-header-cell *matHeaderCellDef  style="font-weight: bold;">Yolcu</th>
+            <td mat-cell *matCellDef="let task">
+              Tahsisli Makam {{task.authority_name}} ({{task.authority_rank}})<br>
+              Emrinde Gidilen<strong>{{task.ordered_by}}</strong> 
+            </td>
+          </ng-container>
+
+          <!-- Görev Bilgisi -->
+          <ng-container matColumnDef="task_info">
+            <th mat-header-cell *matHeaderCellDef  style="font-weight: bold;">Görev Detayı</th>
+            <td mat-cell *matCellDef="let task">
+              <strong>Kağıt No:</strong> {{task.task_paper_no}}<br>
+              <strong>Güzergah:</strong> {{task.route_description}}
+            </td>
+          </ng-container>
+
+          <!-- Dönüş Mesajı -->
+          <ng-container matColumnDef="return_message">
+            <th mat-header-cell *matHeaderCellDef  style="font-weight: bold;">Dönüş Mesajı</th>
+            <td mat-cell *matCellDef="let task">
+              {{task.return_message || '-'}}
+            </td>
+          </ng-container>
+
+          <!-- KM Bilgisi -->
+          <ng-container matColumnDef="km_info">
+            <th mat-header-cell *matHeaderCellDef  style="font-weight: bold;">KM Bilgisi</th>
+            <td mat-cell *matCellDef="let task">
+              <span>Çıkış: {{task.start_km}}</span><br>
+              <span *ngIf="task.end_km">
+                Geliş: {{task.end_km}} <br>
+                <strong>({{task.end_km - task.start_km}} KM)</strong>
+              </span>
+              <span *ngIf="!task.end_km">Devam Ediyor</span>
+            </td>
+          </ng-container>
+
+          <!-- Kapatma Tarihi -->
+          <ng-container matColumnDef="end_date">
+            <th mat-header-cell *matHeaderCellDef  style="font-weight: bold;">Kapatma Tarihi / Süre</th>
+            <td mat-cell *matCellDef="let task">
+              <ng-container *ngIf="task.end_date">
+                {{task.end_date | date:'dd.MM.yyyy HH:mm'}}<br>
+                <small>
+                  <strong>Süre:</strong> {{calculateTaskDuration(task.start_date, task.end_date)}}
+                </small>
+              </ng-container>
+              <ng-container *ngIf="!task.end_date">-</ng-container>
+            </td>
+          </ng-container>
+
+          <!-- İşlemler Kolonu (Sadece admin için, son kapatılan görevde ve araç müsait olduğunda) -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef style="font-weight: bold;">İşlemler</th>
+            <td mat-cell *matCellDef="let task">
+              <button 
+                *ngIf="isAdmin && task.task_status === 'KAPALI' && isLastClosedTask(task) && isVehicleAvailable()"
+                mat-icon-button 
+                color="primary" 
+                (click)="openKmEditDialog(task)"
+                matTooltip="KM bilgisini düzenle">
+                <mat-icon>edit</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+              [ngClass]="{
+                'row-uzun-yol': row.task_type === 'UZUN_YOL',
+                'row-acik': row.task_status === 'ACIK' && row.task_type !== 'UZUN_YOL',
+                'row-kapali': row.task_status === 'KAPALI' && row.task_type !== 'UZUN_YOL',
+                'row-kademede': row.task_status === 'KADEMEDE'
+              }">
+          </tr>
+
+        </table>
+
+        <div class="no-tasks" *ngIf="taskHistory.length === 0">
+          Bu araca ait görev kaydı bulunmamaktadır.
+        </div>
+      </div>
+     </form>
+  </div>
+</div>

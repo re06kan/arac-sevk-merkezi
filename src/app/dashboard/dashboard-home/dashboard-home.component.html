@@ -1,0 +1,132 @@
+<div class="dashboard-content">
+  <!-- Arama ve Toplam Araçlar yan yana -->
+  <div class="top-section">
+    <div class="search-section">
+      <mat-form-field appearance="outline">
+        <mat-label>{{ isGhmUser ? 'Görevdeki Araçları Ara' : 'Araç Ara' }}</mat-label>
+        <input matInput (keyup)="applyFilter($event)" (keydown.enter)="$event" 
+               placeholder="{{ isGhmUser ? 'Görevdeki araç bilgisi ile arayın...' : 'Askeri veya sivil plaka ile arayın...' }}">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+    </div>
+
+    <div class="total-vehicles" *ngIf="!isGhmUser">
+      <!-- Regular users see all filters -->
+      <mat-card>
+        <mat-card-content>
+          <div class="vehicle-stats">
+            <div class="stat-item"
+                 [class.selected]="selectedStatusFilter === 'ALL'"
+                 (click)="filterByStatus('ALL')">
+              <mat-icon>directions_car</mat-icon>
+              <span>Toplam: {{ vehicles.length }}</span>
+            </div>
+            <div class="stat-item available"
+                 [class.selected]="selectedStatusFilter === 'MÜSAİT'"
+                 (click)="filterByStatus('MÜSAİT')">
+              <mat-icon>check_circle</mat-icon>
+              <span>Müsait: {{ getStatusCount('MÜSAİT') }}</span>
+            </div>
+            <div class="stat-item busy"
+                 [class.selected]="selectedStatusFilter === 'GÖREVDE'"
+                 (click)="filterByStatus('GÖREVDE')">
+              <mat-icon>local_shipping</mat-icon>
+              <span>Görevde: {{ getStatusCount('GÖREVDE') }}</span>
+            </div>
+            <div class="stat-item uzun-yol"
+                 [class.selected]="selectedStatusFilter === 'UZUN_YOL'"
+                 (click)="filterByStatus('UZUN_YOL')">
+              <mat-icon>route</mat-icon>
+              <span>Uzun Yol: {{ getStatusCount('UZUN_YOL') }}</span>
+            </div>
+            <div class="stat-item maintenance"
+                 [class.selected]="selectedStatusFilter === 'KADEMEDE'"
+                 (click)="filterByStatus('KADEMEDE')">
+              <mat-icon>build</mat-icon>
+              <span>Kademede: {{ getStatusCount('KADEMEDE') }}</span>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    
+    <div class="total-vehicles" *ngIf="isGhmUser">
+      <!-- GHM users only see on-duty vehicles stats -->
+      <mat-card>
+        <mat-card-content>
+          <div class="vehicle-stats">
+            <div class="stat-item busy selected">
+              <mat-icon>local_shipping</mat-icon>
+              <span>Görüntülenen Görevli Araçlar: {{ filteredVehicles.length }}</span>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- GHM Information message -->
+  <div class="ghm-info-box" *ngIf="isGhmUser">
+    <mat-icon>info</mat-icon>
+    <span>GHM görünümünde yalnızca görevde olan araçlar görüntülenmektedir. Detaylı bilgi için arama yapabilirsiniz.</span>
+  </div>
+
+  <!-- Araç Grid -->
+  <div class="vehicle-grid">
+    <button mat-raised-button
+            *ngFor="let vehicle of displayedVehicles"
+            class="vehicle-button"
+            [disabled]="isGhmUser"
+            [ngClass]="{
+              'musait': vehicle.task_status === 'MÜSAİT',
+              'gorevde': vehicle.task_status === 'GÖREVDE' || vehicle.task_status === 'ACIK',
+              'kademede': vehicle.task_status === 'KADEMEDE',
+              'uzun-yol': vehicle.task_type === 'UZUN_YOL',
+              'view-only': isGhmUser
+            }"
+            (click)="navigateToVehicleDetail(vehicle.id)">
+      <div class="vehicle-content">
+        <div class="header-section">
+          <div class="plate-section">
+            <div class="military-plate">{{vehicle.military_plate}}</div>
+            <div class="civilian-plate">{{vehicle.civilian_plate}}</div>
+          </div>
+          <div class="status-chip"
+                [ngClass]="{
+                  'musait': vehicle.task_status === 'MÜSAİT',
+                  'gorevde': vehicle.task_status === 'GÖREVDE' || vehicle.task_status === 'ACIK',
+                  'kademede': vehicle.task_status === 'KADEMEDE',
+                  'uzun-yol': vehicle.task_type === 'UZUN_YOL'
+                }">
+            {{vehicle.task_status}}
+          </div>
+        </div>
+        <!-- Aktif görev detayları -->
+        <div class="task-details" *ngIf="vehicle.task_status !== 'MÜSAİT'">
+          <div class="details-row">
+            <span class="driver" *ngIf="vehicle.driver_name">
+              <mat-icon>person</mat-icon>{{vehicle.driver_name}}
+            </span>
+            <span class="separator" *ngIf="vehicle.driver_name && vehicle.authority_name"> - </span>
+            <span class="authority" *ngIf="vehicle.authority_name">
+              <mat-icon>stars</mat-icon>{{vehicle.authority_name}}
+            </span>
+          </div>
+        </div>
+      </div>
+    </button>
+  </div>
+
+  <!-- Show message if no vehicles match GHM's criteria -->
+  <div class="no-vehicles" *ngIf="isGhmUser && filteredVehicles.length === 0">
+    <mat-icon>warning</mat-icon>
+    <span>Görevde olan araç bulunmamaktadır.</span>
+  </div>
+
+  <!-- Sayfalama -->
+  <mat-paginator
+    [length]="filteredVehicles.length"
+    [pageSize]="30"
+    [pageSizeOptions]="[30, 60, 90, 120]">
+  </mat-paginator>
+</div>

@@ -1,0 +1,96 @@
+<h2 mat-dialog-title>
+  <mat-icon style="vertical-align: middle; margin-right: 5px; font-size: 18px;">build</mat-icon>
+  Kademe Çıkış İşlemi
+</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="kademeCikisForm">
+    <!-- Araç Bilgileri - 3 sütun olarak düzenlendi -->
+    <div class="vehicle-section">
+      <h3>Araç Bilgileri</h3>
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="label">Askeri Plaka:</span>
+          <span class="value">{{data.vehicle?.military_plate || '-'}}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Sivil Plaka:</span>
+          <span class="value">{{data.vehicle?.civilian_plate || '-'}}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Marka/Model:</span>
+          <span class="value">{{data.vehicle?.brand || '-'}} {{data.vehicle?.model || '-'}}</span>
+        </div>
+      </div>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <!-- İşlem Bilgileri - Daha kompakt düzenleme -->
+    <div class="repair-section">
+      <h3>İşlem Bilgileri</h3>
+      
+      <div class="form-grid">
+        <div class="three-columns">
+          <mat-form-field appearance="outline">
+            <mat-label>Sonuç</mat-label>
+            <mat-select formControlName="sonuc" required>
+              <mat-option *ngFor="let sonuc of sonuclar" [value]="sonuc">{{sonuc}}</mat-option>
+            </mat-select>
+            <mat-icon matSuffix style="font-size: 16px;">done_all</mat-icon>
+            <mat-error *ngIf="kademeCikisForm.get('sonuc')?.hasError('required')">Gerekli</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Yeni KM</mat-label>
+            <input matInput type="number" formControlName="yeniKm" required>
+            <mat-icon matSuffix style="font-size: 16px;">speed</mat-icon>
+            <mat-error *ngIf="kademeCikisForm.get('yeniKm')?.hasError('required')">Gerekli</mat-error>
+            <mat-error *ngIf="kademeCikisForm.get('yeniKm')?.hasError('minKm')">KM çok düşük</mat-error>
+          </mat-form-field>
+          
+          <!-- Görsel denge için boş eleman -->
+          <div></div>
+        </div>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Yapılan İşlemler</mat-label>
+          <textarea matInput formControlName="islemAciklama" rows="2" required
+                    placeholder="Yapılan bakım ve onarım işlemlerini giriniz..."></textarea>
+          <mat-icon matSuffix style="font-size: 16px;">build</mat-icon>
+          <mat-error *ngIf="kademeCikisForm.get('islemAciklama')?.hasError('required')">Gerekli</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Notlar</mat-label>
+          <textarea matInput formControlName="notlar" rows="1" 
+                    placeholder="Ek bilgiler..."></textarea>
+          <mat-icon matSuffix style="font-size: 16px;">note</mat-icon>
+        </mat-form-field>
+        
+        <!-- Değişen Parçalar - Sadeleştirildi -->
+        <div class="parts-section" style="padding: 8px;">
+          <h4>
+            <mat-icon>settings</mat-icon>
+            Değişen Parçalar
+          </h4>
+          <div class="parts-info">
+            <p class="hint" style="font-size: 0.8rem;">Değişen parçalar işlem açıklamasında belirtilebilir</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="center">
+  <button mat-raised-button color="warn" (click)="onCancel()">
+    <mat-icon style="font-size: 16px;">cancel</mat-icon>
+    İptal
+  </button>
+  <button mat-raised-button color="primary" (click)="onSubmit()" 
+          [disabled]="kademeCikisForm.invalid">
+    <mat-icon style="font-size: 16px;">check_circle</mat-icon>
+    Tamamla
+  </button>
+</mat-dialog-actions>

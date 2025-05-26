@@ -1,0 +1,182 @@
+.driver-registration-container {
+  padding: 20px 50px 20px 10px; // Sağdan ve soldan boşluk ayarlandı
+  max-width: none;
+  width: calc(100% - 80px); // Tüm sayfalarda standart genişlik
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  .form-section {
+    width: 100%;
+    padding: 1.5rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    height: auto;
+    max-height: 500px;
+    overflow-y: auto;
+
+    form {
+      display: grid;
+      gap: 10px;
+
+      .field-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr); /* 1fr 1fr yerine 3 eşit sütuna ayarlandı */
+        gap: 16px;
+
+        /* İkinci satır için farklı bir stil tanımlayalım */
+        &:nth-child(2), &:nth-child(3) {
+          grid-template-columns: 1fr 1fr; /* İlk satır dışındakiler 2 eşit sütun olsun */
+        }
+      }
+
+      mat-form-field {
+        width: 100%;
+      }
+
+      button {
+        align-self: flex-start;
+        margin-top: 1rem;
+        background-color: #1976d2;
+        color: white;
+      }
+    }
+
+    h2 {
+      color: #1976d2;
+      margin-bottom: 1.5rem;
+    }
+  }
+
+  .table-section {
+    width: 100%;
+    padding: 1.5rem;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    height: 700px;
+    overflow-y: auto;
+
+    table {
+      width: 100%;
+      margin-top: 1rem;
+      border-radius: 4px 4px 0 0;
+      overflow: hidden;
+
+      .mat-mdc-row {
+        height: 40px !important;
+      }
+    }
+
+    .mat-mdc-paginator {
+      border-radius: 0 0 4px 4px;
+    }
+
+    th.mat-header-cell {
+      font-weight: bold;
+      color: rgba(0, 0, 0, 0.87);
+      background-color: #E3F2FD;
+      padding: 1rem;
+    }
+
+    td.mat-cell {
+      padding: 1rem;
+    }
+  }
+
+  h2 {
+    color: #1976d2;
+    margin-bottom: 1.5rem;
+  }
+}
+
+.button-group {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+
+  button {
+    flex: 1;
+  }
+}
+
+::ng-deep .mat-calendar {
+  background-color: white;
+}
+
+::ng-deep .mat-calendar-content {
+  background-color: white;
+}
+
+::ng-deep .mat-datepicker-popup {
+  background-color: white;
+}
+
+::ng-deep .success-snackbar {
+  background-color: #4caf50 !important;
+  color: white !important;
+  margin-top: 100px !important;
+}
+
+::ng-deep .error-snackbar {
+  background-color: #f44336 !important;
+  color: white !important;
+  margin-top: 100px !important;
+}
+
+::ng-deep .mat-snack-bar-container {
+  text-align: center;
+}
+
+.status-active {
+  color: #4caf50; // yeşil
+}
+
+.status-inactive {
+  color: #f44336; // kırmızı
+}
+
+// Düzenleme butonu için özel stil
+.mat-icon-button[color="accent"] {
+  color: #ffd700; // Sarı renk
+}
+
+.edit-button {
+  .mat-icon {
+    color: #FFD700 !important; // Altın sarısı
+  }
+}
+
+.update-button {
+  background-color: #4caf50 !important; // yeşil
+  color: white !important;
+}
+
+.update-button:disabled {
+  background-color: rgba(76, 175, 80, 0.6) !important; // yarı saydam yeşil
+}
+
+// Alternatif sarı tonları:
+// #FFEB3B - Material Design Yellow
+// #FFC107 - Material Design Amber
+// #F4D03F - Flat UI Yellow
+
+// Responsive tasarım için medya sorgusu
+@media (max-width: 768px) {
+  .driver-registration-container {
+    padding: 10px 15px 10px 5px;
+    width: calc(100% - 20px);
+
+    .form-section,
+    .table-section {
+      padding: 1rem;
+    }
+
+    .field-row {
+      grid-template-columns: 1fr !important;
+    }
+  }
+}

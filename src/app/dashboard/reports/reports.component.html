@@ -1,0 +1,526 @@
+<div class="reports-container">
+  <div class="report-header">
+    <h1 class="page-title">
+      <mat-icon>analytics</mat-icon>
+      Araç Görev Raporları
+    </h1>
+    
+    <!-- Filtreler Kartı -->
+    <mat-card class="filters-card">
+      <mat-card-content>
+        <form [formGroup]="filterForm" class="filters-form single-row">
+          <!-- Form alanları - filtrelerin yer aldığı üst kısım -->
+          <div class="filters-container">
+            <!-- Araç Seçimi -->
+            <mat-form-field appearance="outline" class="filter-field">
+              <mat-label>Araçlar</mat-label>
+              <mat-select formControlName="vehicles" multiple>
+                <!-- Arama kutusu -->
+                <mat-select-trigger>
+                  <span *ngIf="filterForm.get('vehicles')?.value?.length">
+                    {{getSelectedVehiclesText()}}
+                  </span>
+                </mat-select-trigger>
+                
+                <div class="search-header">
+                  <mat-form-field class="search-input" appearance="outline">
+                    <mat-label>Ara</mat-label>
+                    <input matInput #vehicleSearch (keyup)="filterVehicles(vehicleSearch.value)">
+                    <mat-icon matSuffix>search</mat-icon>
+                  </mat-form-field>
+                  <mat-checkbox 
+                    #allSelectedVehicles 
+                    class="select-all-checkbox" 
+                    [checked]="isAllVehiclesSelected()" 
+                    [indeterminate]="isSomeVehiclesSelected() && !isAllVehiclesSelected()"
+                    (change)="toggleAllVehicles($event.checked)"
+                    color="primary">
+                    Tümünü Seç
+                  </mat-checkbox>
+                </div>
+                
+                <mat-divider></mat-divider>
+                
+                <ng-container *ngFor="let group of filteredVehicleGroups">
+                  <mat-optgroup *ngIf="group.vehicles.length > 0" [label]="group.type">
+                    <mat-option *ngFor="let vehicle of group.vehicles" [value]="vehicle.id">
+                      {{vehicle.military_plate}} - {{vehicle.civilian_plate}}
+                    </mat-option>
+                  </mat-optgroup>
+                </ng-container>
+              </mat-select>
+            </mat-form-field>
+
+            <!-- Araç Cinsi Seçimi -->
+            <mat-form-field appearance="outline" class="filter-field">
+              <mat-label>Araç Cinsi</mat-label>
+              <mat-select formControlName="vehicleType" multiple>
+                <mat-option *ngFor="let type of vehicleTypes" [value]="type.value">
+                  {{type.label}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            
+            <!-- Sürücü Seçimi -->
+            <mat-form-field appearance="outline" class="filter-field">
+              <mat-label>Sürücüler</mat-label>
+              <mat-select formControlName="drivers" multiple>
+                <!-- Arama kutusu -->
+                <mat-select-trigger>
+                  <span *ngIf="filterForm.get('drivers')?.value?.length">
+                    {{getSelectedDriversText()}}
+                  </span>
+                </mat-select-trigger>
+                
+                <div class="search-header">
+                  <mat-form-field class="search-input" appearance="outline">
+                    <mat-label>Ara</mat-label>
+                    <input matInput #driverSearch (keyup)="filterDrivers(driverSearch.value)">
+                    <mat-icon matSuffix>search</mat-icon>
+                  </mat-form-field>
+                  <mat-checkbox 
+                    #allSelectedDrivers 
+                    class="select-all-checkbox" 
+                    [checked]="isAllDriversSelected()" 
+                    [indeterminate]="isSomeDriversSelected() && !isAllDriversSelected()"
+                    (change)="toggleAllDrivers($event.checked)"
+                    color="primary">
+                    Tümünü Seç
+                  </mat-checkbox>
+                </div>
+                
+                <mat-divider></mat-divider>
+                
+                <mat-option *ngFor="let driver of filteredDrivers" [value]="driver.id">
+                  {{driver.name}} - {{driver.rutbe || 'Rütbe Yok'}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            
+            <!-- Tahsisli Makam Seçimi -->
+            <mat-form-field appearance="outline" class="filter-field">
+              <mat-label>Tahsisli Makam</mat-label>
+              <mat-select formControlName="assignedAuthority" multiple>
+                <!-- Arama kutusu -->
+                <mat-select-trigger>
+                  <span *ngIf="filterForm.get('assignedAuthority')?.value?.length">
+                    {{getSelectedPersonnelText()}}
+                  </span>
+                </mat-select-trigger>
+                
+                <div class="search-header">
+                  <mat-form-field class="search-input" appearance="outline">
+                    <mat-label>Ara</mat-label>
+                    <input matInput #personnelSearch (keyup)="filterPersonnel(personnelSearch.value)">
+                    <mat-icon matSuffix>search</mat-icon>
+                  </mat-form-field>
+                  <mat-checkbox 
+                    #allSelectedPersonnel 
+                    class="select-all-checkbox" 
+                    [checked]="isAllPersonnelSelected()" 
+                    [indeterminate]="isSomePersonnelSelected() && !isAllPersonnelSelected()"
+                    (change)="toggleAllPersonnel($event.checked)"
+                    color="primary">
+                    Tümünü Seç
+                  </mat-checkbox>
+                </div>
+                
+                <mat-divider></mat-divider>
+                
+                <mat-option *ngFor="let person of filteredPersonnel" [value]="person.id">
+                  {{person.name}} {{person.rank ? '(' + person.rank + ')' : ''}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            
+            <!-- Görev Tipi -->
+            <mat-form-field appearance="outline" class="filter-field">
+              <mat-label>Görev Tipi</mat-label>
+              <mat-select formControlName="taskType" multiple>
+                <mat-option *ngFor="let taskType of taskTypes" [value]="taskType">
+                  {{taskType}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field> 
+
+            <!-- Tarih Aralığı -->
+            <div class="date-range filter-field">
+              <mat-form-field appearance="outline">
+                <mat-label>Başlangıç</mat-label>
+                <input matInput [matDatepicker]="startPicker" formControlName="startDate">
+                <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+                <mat-datepicker #startPicker></mat-datepicker>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Bitiş</mat-label>
+                <input matInput [matDatepicker]="endPicker" formControlName="endDate">
+                <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+                <mat-datepicker #endPicker></mat-datepicker>
+              </mat-form-field>
+            </div>
+          </div>
+          
+          <!-- Butonların yer aldığı alt kısım -->
+          <div class="buttons-container">
+            <div class="filter-actions">
+              <button mat-raised-button color="primary" (click)="generateReport()" 
+                      [disabled]="!filterForm.valid">
+                <mat-icon>search</mat-icon>
+                Rapor Oluştur
+              </button>
+              <button mat-stroked-button color="warn" (click)="resetFilters()">
+                <mat-icon>clear</mat-icon>
+                Temizle
+              </button>
+            </div>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Veri yoksa uyarı mesajı göster -->
+    <mat-card class="alert-card warning" *ngIf="noDataMessage">
+      <div class="alert-content">
+        <mat-icon color="warn">warning</mat-icon>
+        <span>{{ noDataMessage }}</span>
+      </div>
+    </mat-card>
+
+    <!-- Özet İstatistikler -->
+    <div class="stats-grid" *ngIf="reportData">
+      <!-- Toplam görev ve en çok göreve çıkan sürücüler yan yana olacak -->
+      <mat-card class="stat-card top-drivers">
+        <mat-icon color="primary">people</mat-icon>
+        <div class="stat-content">
+          <h3 class="stat-title">En Çok Göreve Çıkan İlk 10 Sürücü</h3>
+          <div class="drivers-list">
+            <div class="driver-item" *ngFor="let driver of reportData.topDrivers; let i = index">
+              <span class="driver-rank">{{i + 1}}.</span>
+              <span class="driver-name">{{driver.name}} {{driver.rank ? '(' + driver.rank + ')' : ''}}</span>
+              <span class="driver-count">{{driver.taskCount}} görev</span>
+            </div>
+            <div class="no-drivers" *ngIf="!reportData.topDrivers?.length">
+              Görev verisi bulunamadı
+            </div>
+          </div>
+        </div>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <mat-icon color="primary">route</mat-icon>
+        <div class="stat-content">
+          <span class="stat-value">{{reportData.totalTasks}}</span>
+          <span class="stat-label">Toplam Görev</span>
+        </div>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <mat-icon color="accent">schedule</mat-icon>
+        <div class="stat-content">
+          <span class="stat-value">{{reportData.totalHours}} Saat</span>
+          <span class="stat-label">Toplam Süre</span>
+        </div>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <mat-icon color="warn">speed</mat-icon>
+        <div class="stat-content">
+          <span class="stat-value">{{reportData.totalKm}} KM</span>
+          <span class="stat-label">Toplam Mesafe</span>
+        </div>
+      </mat-card>
+    </div>
+
+    <!-- Grafik ve Tablo Görünümleri -->
+    <mat-tab-group *ngIf="reportData">
+      <mat-tab label="Grafik Görünümü">
+        <div class="chart-container">
+          <!-- Görev Dağılım Grafiği -->
+          <mat-card class="chart-card">
+            <canvas baseChart
+                    [data]="taskDistributionData"
+                    [type]="'pie'"
+                    [options]="chartOptions">
+            </canvas>
+          </mat-card>
+          
+          <!-- Zaman Çizelgesi -->
+          <mat-card class="chart-card">
+            <canvas baseChart
+                    [data]="timelineData"
+                    [type]="'bar'"
+                    [options]="timelineOptions">
+            </canvas>
+          </mat-card>
+          
+          <!-- YENİ: Sürücü İstatistikleri Grafiği -->
+          <mat-card class="chart-card" [style.--driver-count]="driverStatsData.labels?.length || 10">
+            <canvas baseChart
+                    [data]="driverStatsData"
+                    [type]="'bar'"
+                    [options]="driverStatsOptions">
+            </canvas>
+          </mat-card>
+        </div>
+      </mat-tab>
+
+      <mat-tab label="Tablo Görünümü">
+        <div class="table-container mat-elevation-z8">
+          <!-- Tablo üstüne arama kutusu ekleyelim -->
+          <div class="table-search-container">
+            <mat-form-field appearance="outline" class="table-search-field">
+              <mat-label>Tabloda Ara</mat-label>
+              <input matInput (keyup)="applyTableFilter($event)" placeholder="Kelime ara..." #tableSearchInput>
+              <mat-icon matSuffix>search</mat-icon>
+            </mat-form-field>
+          </div>
+
+          <table mat-table [dataSource]="tableDataSource" matSort class="w-100">
+            <!-- Tarih Sütunu -->
+            <ng-container matColumnDef="start_date">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: bold;">Tarih</th>
+              <td mat-cell *matCellDef="let task">{{task.start_date | date:'dd.MM.yyyy HH:mm'}}</td>
+            </ng-container>
+
+            <!-- Araç Plakası Sütunu -->
+            <ng-container matColumnDef="military_plate">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: bold;">Plaka</th>
+              <td mat-cell *matCellDef="let task">
+                <div class="plate-info">
+                  <div class="plate military-plate">{{task.military_plate || '-'}}</div>
+                  <div class="plate civilian-plate" *ngIf="task.civilian_plate">{{task.civilian_plate}}</div>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Sürücü Sütunu -->
+            <ng-container matColumnDef="driver_name">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: bold;">Sürücü</th>
+              <td mat-cell *matCellDef="let task">{{task.driver_name || 'Belirtilmemiş'}}</td>
+            </ng-container>
+
+            <!-- Tahsisli Makam Sütunu - YENİ -->
+            <ng-container matColumnDef="assigned_authority">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: bold;">Tahsisli Makam</th>
+              <td mat-cell *matCellDef="let task">{{task.authority_name || 'Belirtilmemiş'}}</td>
+            </ng-container>
+
+            <!-- Emrinde Gidilen Sütunu - YENİ -->
+            <ng-container matColumnDef="ordered_by">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: bold;">Emrinde Gidilen</th>
+              <td mat-cell *matCellDef="let task">{{task.ordered_by || 'Belirtilmemiş'}}</td>
+            </ng-container>
+
+            <!-- Kağıt No Sütunu - YENİ -->
+            <ng-container matColumnDef="task_paper_no">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: bold;">Kağıt No</th>
+              <td mat-cell *matCellDef="let task">{{task.task_paper_no || '-'}}</td>
+            </ng-container>
+
+            <!-- Görev Tipi Sütunu -->
+            <ng-container matColumnDef="task_type">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: bold;">Görev Tipi</th>
+              <td mat-cell *matCellDef="let task">{{task.task_type}}</td>
+            </ng-container>
+
+            <!-- Güzergah Sütunu - YENİ -->
+            <ng-container matColumnDef="route_description">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: bold;">Güzergah</th>
+              <td mat-cell *matCellDef="let task">{{task.route_description || '-'}}</td>
+            </ng-container>
+
+            <!-- Başlangıç KM Sütunu -->
+            <ng-container matColumnDef="start_km">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: bold;">Başlangıç KM</th>
+              <td mat-cell *matCellDef="let task">{{task.start_km}}</td>
+            </ng-container>
+
+            <!-- Bitiş KM Sütunu -->
+            <ng-container matColumnDef="end_km">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: bold;">Bitiş KM</th>
+              <td mat-cell *matCellDef="let task">{{task.end_km || '-'}}</td>
+            </ng-container>
+
+            <!-- Toplam KM Sütunu -->
+            <ng-container matColumnDef="total_km">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: bold;">Toplam KM</th>
+              <td mat-cell *matCellDef="let task">{{task.total_km || '-'}}</td>
+            </ng-container>
+
+            <!-- Süre Sütunu -->
+            <ng-container matColumnDef="duration_hours">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: bold;">Süre (Saat)</th>
+              <td mat-cell *matCellDef="let task">{{task.duration_hours ? (task.duration_hours | number:'1.1-1') : '-'}}</td>
+            </ng-container>
+
+            <!-- Durum Sütunu -->
+            <ng-container matColumnDef="task_status">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: bold;">Durum</th>
+              <td mat-cell *matCellDef="let task">
+                <span [ngClass]="{'text-success': task.task_status === 'KAPALI', 
+                                 'text-warning': task.task_status === 'ACIK',
+                                 'text-info': task.task_status === 'UZUN_YOL',
+                                 'text-danger': task.task_status === 'KADEMEDE'}">
+                  {{task.task_status}}
+                </span>
+              </td>
+            </ng-container>
+
+            <!-- Dönüş Mesajı Sütunu - YENİ -->
+            <ng-container matColumnDef="return_message">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: bold;">Dönüş Mesajı</th>
+              <td mat-cell *matCellDef="let task">{{task.return_message || '-'}}</td>
+            </ng-container>
+
+            <!-- Yeni eklenen Bitiş Tarihi kolonu -->
+            <ng-container matColumnDef="end_date">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: bold;"> Bitiş Tarihi </th>
+              <td mat-cell *matCellDef="let task">
+                {{task.end_date ? (task.end_date | date:'dd.MM.yyyy HH:mm') : 'Devam Ediyor'}}
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            
+            <!-- Veri yoksa göster - colspan'i dinamik olarak ayarladık -->
+            <tr class="mat-row" *matNoDataRow>
+              <td class="mat-cell" [attr.colspan]="displayedColumns.length" style="text-align: center; padding: 16px;">
+                <ng-container *ngIf="tableSearchInput.value">
+                  "{{tableSearchInput.value}}" ile eşleşen bir sonuç bulunamadı
+                </ng-container>
+                <ng-container *ngIf="!tableSearchInput.value">
+                  Seçilen kriterlere uygun veri bulunamadı
+                </ng-container>
+              </td>
+            </tr>
+          </table>
+
+          <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]" 
+                         [pageSize]="25"
+                         showFirstLastButtons>
+          </mat-paginator>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+
+    <!-- Dışa Aktarma Butonları -->
+    <div class="export-actions" *ngIf="reportData">
+      <button mat-raised-button color="primary" (click)="exportToPDF()">
+        <mat-icon>picture_as_pdf</mat-icon>
+        PDF olarak İndir
+      </button>
+      <button mat-raised-button color="accent" (click)="exportToExcel()">
+        <mat-icon>table_chart</mat-icon>
+        Excel olarak İndir
+      </button>
+    </div>
+  </div>
+
+  <!-- Sistem Logları Bölümü -->
+  <div class="logs-section">
+    <h2>Sistem Logları</h2>
+    
+    <div class="log-filters">
+      <mat-form-field appearance="outline">
+        <mat-label>İşlem Tipi</mat-label>
+        <mat-select [(ngModel)]="selectedActionType">
+          <mat-option value="all">Tümü</mat-option>
+          <mat-option value="GOREV_AC">Görev Açma</mat-option>
+          <mat-option value="GOREV_KAPAT">Görev Kapatma</mat-option>
+          <mat-option value="UZUN_YOL">Uzun Yol</mat-option>
+          <mat-option value="KADEME_GIRIS">Kademe Giriş</mat-option>
+          <mat-option value="KADEME_CIKIS">Kademe Çıkış</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Başlangıç Tarihi</mat-label>
+        <input matInput [matDatepicker]="logStartPicker" [(ngModel)]="logStartDate">
+        <mat-datepicker-toggle matSuffix [for]="logStartPicker"></mat-datepicker-toggle>
+        <mat-datepicker #logStartPicker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Bitiş Tarihi</mat-label>
+        <input matInput [matDatepicker]="logEndPicker" [(ngModel)]="logEndDate">
+        <mat-datepicker-toggle matSuffix [for]="logEndPicker"></mat-datepicker-toggle>
+        <mat-datepicker #logEndPicker></mat-datepicker>
+      </mat-form-field>
+
+      <button mat-raised-button color="primary" (click)="searchLogs()">
+        <mat-icon>search</mat-icon>
+        Logları Getir
+      </button>
+    </div>
+
+    <div class="log-table-container">
+      <!-- Sistem log tablosu başlıyor --> 
+      <table mat-table [dataSource]="logDataSource" class="mat-elevation-z8" matSort>
+        <!-- Tarih Sütunu -->
+        <ng-container matColumnDef="created_at">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Tarih</th>
+          <td mat-cell *matCellDef="let log">{{log.created_at | date:'dd.MM.yyyy HH:mm:ss'}}</td>
+        </ng-container>
+
+        <!-- İşlem Tipi Sütunu -->
+        <ng-container matColumnDef="action_type">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>İşlem</th>
+          <td mat-cell *matCellDef="let log">{{getActionTypeLabel(log.action_type)}}</td>
+        </ng-container>
+
+        <!-- Araç Sütunu - Hem askeri hem sivil plaka gösterilecek şekilde güncellendi -->
+        <ng-container matColumnDef="vehicle">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Araç</th>
+          <td mat-cell *matCellDef="let log">
+            <div *ngIf="log.vehicle_military_plate || log.vehicle_civilian_plate">
+              <strong>{{log.vehicle_military_plate || 'Askeri plaka yok'}}</strong>
+              <br>
+              <small>{{log.vehicle_civilian_plate || 'Sivil plaka yok'}}</small>
+            </div>
+            <div *ngIf="!log.vehicle_military_plate && !log.vehicle_civilian_plate">
+              -
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- IP Adresi Sütunu Eklendi -->
+        <ng-container matColumnDef="ip_address">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>IP Adresi</th>
+          <td mat-cell *matCellDef="let log">{{log.ip_address || '-'}}</td>
+        </ng-container>
+
+        <!-- Kullanıcı Sütunu -->
+        <ng-container matColumnDef="user">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Kullanıcı</th>
+          <td mat-cell *matCellDef="let log">{{log.username}}</td>
+        </ng-container>
+
+        <!-- Detaylar Sütunu -->
+        <ng-container matColumnDef="details">
+          <th mat-header-cell *matHeaderCellDef>Detaylar</th>
+          <td mat-cell *matCellDef="let log">
+            <button mat-icon-button color="accent" (click)="showLogDetails(log)">
+              <mat-icon style="color: #FFD700;">info</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <!-- Tablo satırları -->
+        <tr mat-header-row *matHeaderRowDef="logColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: logColumns;"></tr>
+      </table>
+    </div>
+    
+    <mat-paginator #logPaginator [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons></mat-paginator>
+    
+    <!-- Log export işlemleri - Excel butonu kaldırıldı -->
+    <div class="export-actions" *ngIf="logDataSource.data.length > 0">
+      <button mat-raised-button color="primary" (click)="exportLogsToPDF()">
+        <mat-icon>picture_as_pdf</mat-icon>
+        PDF'e Aktar
+      </button>
+    </div>
+  </div>
+</div>

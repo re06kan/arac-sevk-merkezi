@@ -1,0 +1,130 @@
+<div class="log-details-container">
+  <h2 mat-dialog-title>
+    <div class="title-content">
+      <div class="action-icon" [style.background-color]="getActionColor()">
+        <mat-icon>
+          {{ data.action_type === 'GOREV_AC' ? 'play_arrow' :
+             data.action_type === 'GOREV_KAPAT' ? 'stop' :
+             data.action_type === 'UZUN_YOL' ? 'alt_route' :
+             data.action_type === 'KADEME_GIRIS' ? 'engineering' :
+             data.action_type === 'KADEME_CIKIS' ? 'exit_to_app' : 'info' }}
+        </mat-icon>
+      </div>
+      <span>{{ getActionTypeLabel() }} İşlemi Detayları</span>
+    </div>
+    <button mat-icon-button (click)="closeDialog()" class="close-button" aria-label="Kapat">
+      <mat-icon>close</mat-icon>
+    </button>
+  </h2>
+
+  <mat-dialog-content>
+    <div class="detail-section">
+      <div class="detail-item">
+        <div class="detail-label">İşlem Tarihi:</div>
+        <div class="detail-value">{{ formatDate(data.created_at) }}</div>
+      </div>
+
+      <div class="detail-item">
+        <div class="detail-label">İşlem Tipi:</div>
+        <div class="detail-value">
+          <span class="action-badge" [style.background-color]="getActionColor()">
+            {{ getActionTypeLabel() }}
+          </span>
+        </div>
+      </div>
+
+      <div class="detail-item">
+        <div class="detail-label">Kullanıcı:</div>
+        <div class="detail-value">{{ data.fullname }} ({{ data.username }})</div>
+      </div>
+
+      <div class="detail-item">
+        <div class="detail-label">Araç:</div>
+        <div class="detail-value">
+          <div><strong>Askeri Plaka:</strong> {{ data.vehicle_military_plate || 'Belirtilmemiş' }}</div>
+          <div><strong>Sivil Plaka:</strong> {{ data.vehicle_civilian_plate || 'Belirtilmemiş' }}</div>
+        </div>
+      </div>
+
+      <div class="detail-item">
+        <div class="detail-label">IP Adresi:</div>
+        <div class="detail-value">{{ data.ip_address || 'Bilinmiyor' }}</div>
+      </div>
+
+      <div class="detail-item">
+        <div class="detail-label">Görev ID:</div>
+        <div class="detail-value">{{ data.taskId || 'Belirtilmemiş' }}</div>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <div class="action-details">
+        <h3>İşlem Detayları</h3>
+        
+        <div class="detail-group" *ngIf="data.action_details">
+          <!-- KM Bilgisi -->
+          <div class="sub-item" *ngIf="data.action_details.km !== undefined">
+            <span class="sub-label">Kilometre:</span>
+            <span class="sub-value">{{ data.action_details.km }} KM</span>
+          </div>
+
+          <!-- Durum Değişikliği -->
+          <div class="sub-item" *ngIf="data.action_details.oldStatus || data.action_details.newStatus">
+            <span class="sub-label">Durum Değişikliği:</span>
+            <span class="sub-value">
+              <span *ngIf="data.action_details.oldStatus" class="status-badge old-status">{{ data.action_details.oldStatus }}</span>
+              <mat-icon *ngIf="data.action_details.oldStatus && data.action_details.newStatus">arrow_forward</mat-icon>
+              <span *ngIf="data.action_details.newStatus" class="status-badge new-status">{{ data.action_details.newStatus }}</span>
+            </span>
+          </div>
+
+          <!-- Sürücü Bilgisi -->
+          <div class="sub-item" *ngIf="data.action_details.driverName">
+            <span class="sub-label">Sürücü:</span>
+            <span class="sub-value">{{ data.action_details.driverName }}</span>
+          </div>
+
+          <!-- Güzergah Bilgisi -->
+          <div class="sub-item" *ngIf="data.action_details.routeDescription">
+            <span class="sub-label">Güzergah:</span>
+            <span class="sub-value">{{ data.action_details.routeDescription }}</span>
+          </div>
+          
+          <!-- Bakım Detayları -->
+          <div class="maintenance-details" *ngIf="data.action_details.maintenanceDetails">
+            <div class="sub-item">
+              <span class="sub-label">Arıza Türü:</span>
+              <span class="sub-value">{{ data.action_details.maintenanceDetails.faultType }}</span>
+            </div>
+            <div class="sub-item">
+              <span class="sub-label">Arıza Açıklaması:</span>
+              <span class="sub-value">{{ data.action_details.maintenanceDetails.faultDescription }}</span>
+            </div>
+            <div class="sub-item" *ngIf="data.action_details.maintenanceDetails.repairDescription">
+              <span class="sub-label">Onarım Açıklaması:</span>
+              <span class="sub-value">{{ data.action_details.maintenanceDetails.repairDescription }}</span>
+            </div>
+            <div class="sub-item" *ngIf="data.action_details.maintenanceDetails.repairResult">
+              <span class="sub-label">Onarım Sonucu:</span>
+              <span class="sub-value">{{ data.action_details.maintenanceDetails.repairResult }}</span>
+            </div>
+            <div class="sub-item" *ngIf="data.action_details.maintenanceDetails.replacedParts">
+              <span class="sub-label">Değişen Parçalar:</span>
+              <span class="sub-value">{{ data.action_details.maintenanceDetails.replacedParts }}</span>
+            </div>
+          </div>
+
+          <!-- Ham veri -->
+          <details class="raw-data">
+            <summary>JSON Veri</summary>
+            <pre>{{ data.action_details | json }}</pre>
+          </details>
+        </div>
+      </div>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-raised-button color="primary" (click)="closeDialog()">Kapat</button>
+  </mat-dialog-actions>
+</div>

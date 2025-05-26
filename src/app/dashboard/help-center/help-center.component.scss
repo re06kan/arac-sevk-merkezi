@@ -1,0 +1,216 @@
+.help-center-container {
+  padding: 24px 30px 24px 10px;
+  width: calc(100% - 60px);
+  margin: 0;
+
+  .header-section {
+    margin-bottom: 24px;
+
+    .page-title {
+      display: flex;
+      align-items: center;
+      font-size: 2rem;
+      color: #333;
+      margin-bottom: 16px;
+
+      mat-icon {
+        margin-right: 16px;
+        font-size: 2rem;
+        height: 40px;
+        width: 40px;
+        color: #1976d2;
+      }
+    }
+
+    .welcome-card {
+      background-color: #e8f5e9;
+      border-left: 5px solid #4caf50;
+
+      .welcome-message {
+        padding: 12px;
+
+        h2 {
+          color: #333;
+          font-size: 1.3rem;
+          margin-bottom: 8px;
+        }
+
+        p {
+          color: #555;
+          font-size: 1rem;
+          margin: 0;
+        }
+      }
+    }
+  }
+
+  // Grid Layout için stiller
+  .category-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 24px;
+
+    .category-card {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+      padding: 16px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+      &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+      }
+
+      .category-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 16px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #f0f0f0;
+
+        mat-icon {
+          margin-right: 12px;
+          color: #1976d2;
+          font-size: 24px;
+          height: 24px;
+          width: 24px;
+        }
+
+        h2 {
+          font-size: 1.3rem;
+          color: #333;
+          margin: 0;
+          font-weight: 500;
+        }
+      }
+    }
+  }
+
+  // Accordion stili
+  .faq-accordion {
+    .mat-expansion-panel {
+      box-shadow: none;
+      border: 1px solid #f0f0f0;
+      margin-bottom: 8px;
+      border-radius: 6px;
+      overflow: hidden;
+
+      .mat-expansion-panel-header {
+        padding: 12px 16px;
+        height: auto;
+        min-height: 48px;
+
+        &:hover {
+          background: rgba(25, 118, 210, 0.04);
+        }
+
+        .mat-panel-title {
+          .question-text {
+            font-weight: 500;
+            color: #444;
+            font-size: 0.95rem;
+            line-height: 1.4;
+          }
+        }
+      }
+
+      .mat-expansion-panel-content {
+        .mat-expansion-panel-body {
+          padding: 8px 16px 16px;
+        }
+      }
+
+      &.mat-expanded {
+        margin-bottom: 12px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+
+        .mat-expansion-panel-header {
+          background-color: rgba(25, 118, 210, 0.08);
+        }
+      }
+    }
+
+    .faq-answer {
+      color: #555;
+      line-height: 1.5;
+      font-size: 0.95rem;
+
+      ol,
+      ul {
+        padding-left: 20px;
+        margin: 8px 0;
+
+        li {
+          margin-bottom: 4px;
+        }
+      }
+
+      p {
+        margin: 8px 0;
+      }
+
+      strong {
+        color: #333;
+        font-weight: 500;
+      }
+    }
+  }
+
+  // Yazılım bilgileri için özel stiller
+  .tech-details,
+  .system-requirements,
+  .version-info,
+  .tech-support {
+    h4 {
+      color: #1976d2;
+      font-size: 1rem;
+      margin: 16px 0 8px 0;
+      font-weight: 500;
+    }
+
+    ul {
+      margin-bottom: 16px;
+    }
+    
+    li {
+      margin-bottom: 5px;
+    }
+    
+    ul ul {
+      margin: 5px 0 5px 20px;
+    }
+    
+    p {
+      margin: 10px 0;
+    }
+    
+    strong {
+      font-weight: 500;
+      color: #333;
+    }
+  }
+}
+
+// Mobil cihazlarda düzenlemeler
+@media (max-width: 768px) {
+  .help-center-container {
+    padding: 16px;
+    width: calc(100% - 32px);
+
+    .category-grid {
+      grid-template-columns: 1fr; // Tek sütuna geç
+      gap: 16px;
+    }
+
+    .page-title {
+      font-size: 1.5rem;
+
+      mat-icon {
+        font-size: 1.5rem;
+        height: 30px;
+        width: 30px;
+      }
+    }
+  }
+}

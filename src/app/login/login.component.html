@@ -1,0 +1,42 @@
+<div class="login-container">
+  <div class="login-card">
+    <h1>Araç Sevk Merkezi</h1>
+    <h2>Giriş</h2>
+    
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <mat-form-field appearance="outline">
+        <mat-label>Kullanıcı Adı</mat-label>
+        <input matInput formControlName="username" placeholder="11 haneli TC No giriniz" maxlength="11">
+        <mat-icon matSuffix>person</mat-icon>
+        <mat-error *ngIf="loginForm.get('username')?.hasError('required')">
+          Kullanıcı adı gerekli
+        </mat-error>
+        <mat-error *ngIf="loginForm.get('username')?.hasError('pattern')">
+          Sadece rakam girebilirsiniz
+        </mat-error>
+        <mat-error *ngIf="loginForm.get('username')?.hasError('minlength')">
+          Kullanıcı adı 11 karakter olmalıdır
+        </mat-error>
+      </mat-form-field>
+      
+      <mat-form-field appearance="outline">
+        <mat-label>Şifre</mat-label>
+        <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" placeholder="Şifrenizi girin">
+        <mat-icon matSuffix (click)="togglePasswordVisibility()" class="password-visibility-icon visibility-toggle">
+          {{hidePassword ? 'visibility_off' : 'visibility'}}
+        </mat-icon>
+        <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
+          Şifre gerekli
+        </mat-error>
+      </mat-form-field>
+      
+      <button mat-raised-button type="submit" [disabled]="loginForm.invalid">
+        Giriş Yap
+      </button>
+    </form>
+  </div>
+  
+  <!-- Copyright bilgisi eklendi -->
+  <div class="copyright-text">
+    v1.0.0 © 2025 Araç Sevk Merkezi. Tüm hakları saklıdır.
+</div>

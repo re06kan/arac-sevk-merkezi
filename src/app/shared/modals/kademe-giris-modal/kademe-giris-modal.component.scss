@@ -1,0 +1,311 @@
+:host {
+  display: block;
+  min-width: 1200px; // 800px'den 1200px'e çıkarıldı
+}
+
+.vehicle-info {
+  margin-bottom: 0px;
+  background: #f8fafc;
+  padding: 2px;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  
+  h3 {
+    color: #2c3e50;
+    font-size: 1.2em;
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+  
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 5px;
+    background: white;
+    padding: 0px;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+
+    p {
+      margin: 0;
+      padding: 12px;
+      background: #f8fafc;
+      border-radius: 6px;
+      border-left: 3px solid #1976d2;
+      
+      strong {
+        color: #1976d2;
+        margin-right: 12px;
+        font-weight: 500;
+        font-size: 0.9em;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+    }
+  }
+}
+
+.fault-info {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); // 3'ten 4'e çıkarıldı
+  gap: 20px; // Gap'i arttırdık
+  padding: 20px 40px; // Yanlarda daha fazla padding
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+
+  h3 {
+    grid-column: 1 / -1;
+    color: #2c3e50;
+    font-size: 1.2em;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #e0e0e0;
+    font-weight: 500;
+  }
+
+  // Tam genişlik alanlar
+  .mat-form-field.full-width,
+  mat-form-field:nth-child(3), // Arıza Açıklaması
+  mat-form-field:last-child {  // Notlar
+    grid-column: 1 / -1;
+  }
+
+  // İlk satırdaki alanları yan yana diz
+  mat-form-field:nth-child(2), // Arıza Türü
+  mat-form-field:nth-child(3), // Öncelik
+  mat-form-field:nth-child(4), // Tahmini Süre
+  mat-form-field:nth-child(5) { // Sorumlu Teknisyen
+    grid-column: span 1; // Her biri bir sütun kaplasın
+  }
+
+  // Diğer alanları tam genişlik yap
+  mat-form-field:nth-child(5), // Arıza Açıklaması
+  mat-form-field:nth-child(6), // Tahmini Süre
+  mat-form-field:nth-child(7) { // Notlar
+    grid-column: 1 / -1; // Tam genişlik
+  }
+
+  // İlk satırdaki alanları yan yana diz - sırayı güncelle
+  mat-form-field:nth-child(2), // Arıza Türü
+  mat-form-field:nth-child(3), // Öncelik
+  mat-form-field:nth-child(4), // Tahmini Süre
+  mat-form-field:nth-child(5) { // Sorumlu Teknisyen
+    grid-column: span 1; // Her biri bir sütun kaplasın
+  }
+
+  // Diğer alanları tam genişlik yap
+  mat-form-field:nth-child(6), // Arıza Açıklaması
+  mat-form-field:nth-child(7) { // Notlar
+    grid-column: 1 / -1; // Tam genişlik
+  }
+
+  // İlk satırdaki alanları yan yana diz
+  mat-form-field:nth-child(2), // Arıza Türü
+  mat-form-field:nth-child(3), // Öncelik
+  mat-form-field:nth-child(4), // Sorumlu Teknisyen
+  mat-form-field:nth-child(5) { // Tahmini Süre
+    grid-column: span 1;
+  }
+
+  // Diğer alanları tam genişlik yap
+  mat-form-field:nth-child(6), // Arıza Açıklaması
+  mat-form-field:nth-child(7) { // Notlar
+    grid-column: 1 / -1;
+  }
+
+  // İlk satırdaki alanları yan yana diz - daha dar genişlik
+  mat-form-field:nth-child(2), // Arıza Türü
+  mat-form-field:nth-child(3), // Öncelik
+  mat-form-field:nth-child(4), // Sorumlu Teknisyen
+  mat-form-field:nth-child(5) { // Tahmini Süre
+    grid-column: span 1;
+    width: 90%; // Genişliği azalt
+    justify-self: center; // Merkeze hizala
+  }
+
+  // Diğer alanları tam genişlik yap
+  mat-form-field:nth-child(6), // Arıza Açıklaması
+  mat-form-field:nth-child(7) { // Notlar
+    grid-column: 1 / -1;
+    width: 97%; // Tam genişliği biraz azalt
+    justify-self: center; // Merkeze hizala
+  }
+}
+
+// Dialog başlığı için stil
+::ng-deep .mat-dialog-title {
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  color: #1976d2;
+  font-size: 1.75em;
+  border-bottom: 2px solid #e0e0e0;
+  font-weight: 500;
+}
+
+// Form field stilleri
+::ng-deep {
+  .mat-form-field {
+    width: 100%;
+    
+    .mat-form-field-wrapper {
+      margin: 0;
+    }
+    
+    .mat-form-field-outline {
+      background: #fff;
+    }
+    
+    // Label stilleri
+    .mat-form-field-label {
+      color: #666;
+    }
+
+    // Input stilleri
+    .mat-input-element {
+      padding: 4px 0;
+    }
+
+    // Select stilleri
+    .mat-select-value {
+      color: #2c3e50;
+    }
+
+    // Textarea stilleri
+    textarea.mat-input-element {
+      padding: 8px 0;
+      line-height: 1.5;
+    }
+  }
+
+  // Dialog actions (butonlar) için stiller
+  .mat-dialog-actions {
+    padding: 16px 24px;
+    margin-bottom: 0;
+    background: #f8fafc;
+    border-top: 1px solid #e0e0e0;
+    gap: 12px;
+
+    button {
+      min-width: 120px;
+      padding: 8px 24px;
+      font-weight: 500;
+      
+      &[color="primary"] {
+        background-color: #1976d2;
+        
+        &:hover {
+          background-color: #43a047 !important;
+        }
+
+        &:disabled {
+          background-color: rgba(0,0,0,0.12) !important;
+          color: rgba(0,0,0,0.38) !important;
+        }
+      }
+
+      &[color="warn"] {
+        background-color: #f44336 !important;
+        color: white !important;
+        
+        &:hover {
+          background-color: #e53935 !important;
+          transform: translateY(-2px);
+          transition: all 0.3s ease;
+        }
+      }
+    }
+  }
+
+  // Mat-select dropdown stillerini güncelle
+  .mat-mdc-select-panel,
+  .mat-select-panel,
+  .mat-autocomplete-panel {
+    background: white !important;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+    
+    .mat-mdc-option,
+    .mat-option {
+      background-color: white !important;
+      padding: 0px 16px;
+      
+      &:hover {
+        background: rgba(25, 118, 210, 0.05) !important;
+      }
+      
+      &.mdc-list-item--selected,
+      &.mat-selected {
+        background: rgba(25, 118, 210, 0.1) !important;
+        color: #1976d2 !important;
+      }
+
+      .mdc-list-item__primary-text {
+        color: #2c3e50;
+      }
+    }
+  }
+
+  // Form field ve select container arkaplan
+  .mat-mdc-form-field-focus-overlay,
+  .mat-form-field-flex {
+    background-color: white !important;
+  }
+
+  // Mat-select dropdown stilleri
+  .mat-select-panel {
+    background: white;
+    border-radius: 8px !important;
+    
+    .mat-option {
+      padding: 12px 16px;
+      
+      &:hover {
+        background: rgba(25, 118, 210, 0.05);
+      }
+      
+      &.mat-selected {
+        background: rgba(25, 118, 210, 0.1);
+        color: #1976d2;
+      }
+    }
+  }
+
+  // Modal arka planı için stil
+  .mat-dialog-container {
+    background-color: #fff3e0 !important; // Hafif turuncu arka plan
+  }
+
+  // Başlık stilini güncelle
+  .mat-mdc-dialog-title, // mdc prefix'i eklendi
+  .mat-dialog-title {
+    text-align: center !important;
+    margin-bottom: 24px !important;
+    padding-bottom: 16px !important;
+    color: #e65100 !important;
+    font-size: 1.75em !important;
+    border-bottom: 2px solid #ffb74d !important;
+    font-weight: 700 !important; // Daha kalın font
+  }
+}
+
+// Dialog content padding
+::ng-deep .mat-dialog-content {
+  max-height: 80vh;
+  padding: 0 24px;
+  margin: 0;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: #90a4ae;
+    border-radius: 4px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: #eceff1;
+  }
+}

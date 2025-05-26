@@ -1,0 +1,175 @@
+.user-management-container {
+  padding: 20px 50px 20px 10px; // Sağdan ve soldan boşluk ayarlandı
+  max-width: none;
+  width: calc(100% - 80px); // Tüm sayfalarda standart genişlik
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 10px;
+  }
+  
+  .form-section {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+      
+      mat-form-field {
+        width: 100%;
+      }
+    }
+    
+    .button-group {
+      display: flex;
+      gap: 16px;
+      margin-top: 20px;
+      justify-content: flex-start;
+      
+      button {
+        min-width: 120px;
+      }
+    }
+  }
+  
+  .table-section {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    
+    .filter-field {
+      width: 100%;
+      margin-bottom: 16px;
+    }
+    
+    .table-container {
+      overflow-x: auto;
+      
+      table {
+        width: 100%;
+        
+        th {
+          font-weight: bold;
+          color: #333;
+        }
+        
+        td {
+          vertical-align: middle;
+        }
+      }
+    }
+    
+    .status-badge {
+      padding: 4px 12px;
+      border-radius: 16px;
+      font-size: 0.85rem;
+      
+      &.active {
+        background-color: #e8f5e9;
+        color: #2e7d32;
+      }
+      
+      &.inactive {
+        background-color: #ffebee;
+        color: #c62828;
+      }
+    }
+  }
+}
+
+// Şifre değiştirme checkbox'ı için stil
+.password-change-option {
+  margin: 8px 0 16px 0;
+}
+
+// Yeşil buton için özel stil
+::ng-deep .mat-mdc-raised-button.mat-success,
+::ng-deep .mat-mdc-icon-button.mat-success {
+  background-color: #4caf50; // Material yeşil renk
+  color: white;
+}
+
+// Yeşil buton için özel stil - daha güçlü seçici ile
+::ng-deep .mat-mdc-raised-button.mat-success {
+  background-color: #4caf50 !important; // Material yeşil renk
+  color: white !important;
+  font-weight: 500;
+}
+
+// Yeşil buton hover durumu
+::ng-deep .mat-mdc-raised-button.mat-success:hover:not([disabled]) {
+  background-color: #3d8b40 !important; // Daha koyu yeşil
+}
+
+// Durum ikonları için stiller
+.status-active {
+  color: #4caf50; // yeşil
+}
+
+.status-inactive {
+  color: #f44336; // kırmızı
+}
+
+// Kalem ikonu için sarı renk
+button[color="accent"] .mat-icon {
+  color: #FFD700 !important; // Sarı (gold) renk
+}
+
+// Dropdown seçenekleri için beyaz arka plan
+::ng-deep .mat-mdc-select-panel {
+  background-color: white !important;
+}
+
+::ng-deep .mat-mdc-option {
+  background-color: white !important;
+  
+  &:hover:not(.mat-mdc-option-disabled) {
+    background-color: rgba(0, 0, 0, 0.04) !important; // Hover durumunda hafif gri
+  }
+  
+  &.mdc-list-item--selected:not(.mat-mdc-option-multiple):not(.mat-mdc-option-disabled) {
+    background-color: rgba(25, 118, 210, 0.12) !important; // Seçili option için hafif mavi
+  }
+}
+
+// Snackbar stilleri
+::ng-deep .success-snackbar {
+  background: #4caf50;
+  color: white;
+  
+  .mat-mdc-snack-bar-actions .mdc-button__label {
+    color: white;
+    font-weight: 500;
+  }
+}
+
+::ng-deep .error-snackbar {
+  background: #f44336;
+  color: white;
+  
+  .mat-mdc-snack-bar-actions .mdc-button__label {
+    color: white;
+    font-weight: 500;
+  }
+}
+
+@media (max-width: 768px) {
+  .user-management-container {
+    .form-grid {
+      grid-template-columns: 1fr !important;
+    }
+  }
+}

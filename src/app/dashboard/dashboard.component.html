@@ -1,0 +1,90 @@
+<div class="dashboard-container">
+  <div class="top-bar">
+    <button mat-icon-button class="menu-toggle" (click)="toggleSidenav()">
+      <mat-icon>{{ sidenavOpened ? 'menu_open' : 'menu' }}</mat-icon>
+    </button>
+  </div>
+
+  <div class="main-content-wrapper">
+    <div class="sidenav" [ngClass]="{'collapsed': !sidenavOpened}">
+      <mat-nav-list>
+        <!-- Herkes Ana Sayfayı görebilir -->
+        <a mat-list-item routerLink="/dashboard"
+           routerLinkActive="active-menu-item"
+           [routerLinkActiveOptions]="{exact: true}">
+          <mat-icon>dashboard</mat-icon>
+          <span *ngIf="sidenavOpened">Ana Sayfa</span>
+        </a>
+        <hr>
+
+        <!-- Sadece admin görebilir -->
+        <ng-container *ngIf="isAdmin">
+          <a mat-list-item routerLink="/dashboard/vehicle-registration"
+             routerLinkActive="active-menu-item">
+            <mat-icon>directions_car</mat-icon>
+            <span *ngIf="sidenavOpened">Araç Kayıt</span>
+          </a>
+          <a mat-list-item routerLink="/dashboard/driver-registration"
+             routerLinkActive="active-menu-item">
+            <mat-icon>person_add</mat-icon>
+            <span *ngIf="sidenavOpened">Sürücü Kayıt</span>
+          </a>
+          <a mat-list-item routerLink="/dashboard/personnel-management"
+             routerLinkActive="active-menu-item">
+            <mat-icon>people</mat-icon>
+            <span *ngIf="sidenavOpened">Personel İşlemleri</span>
+          </a>
+          <a mat-list-item routerLink="/dashboard/reports"
+             routerLinkActive="active-menu-item">
+            <mat-icon>assessment</mat-icon>
+            <span *ngIf="sidenavOpened">Raporlar ve Log</span>
+          </a>
+          <a mat-list-item routerLink="/dashboard/user-management"
+             routerLinkActive="active-menu-item">
+            <mat-icon>manage_accounts</mat-icon>
+            <span *ngIf="sidenavOpened">Kullanıcı Yönetimi</span>
+          </a>
+        </ng-container>
+
+        <!-- Normal kullanıcılar ve admin görebilir, GHM göremez -->
+        <ng-container *ngIf="isUser || isAdmin">
+          <a mat-list-item
+             (click)="logHelpCenterClick($event)"
+             routerLink="/dashboard/help-center"
+             routerLinkActive="active-menu-item">
+            <mat-icon>help</mat-icon>
+            <span *ngIf="sidenavOpened">Yardım Merkezi</span>
+          </a>
+        </ng-container>
+
+        <!-- Alt menü gruplandırma için Spacer ekliyoruz -->
+        <div class="spacer"></div>
+
+        <!-- Kullanıcı bilgisi - expanded mode -->
+        <div class="user-info" *ngIf="sidenavOpened">
+          <div class="user-name">{{currentUserFullName}}</div>
+          <div class="user-role">{{currentUserRole | titlecase}}</div>
+        </div>
+
+        <!-- Kullanıcı bilgisi - collapsed mode -->
+        <div class="user-info-collapsed" *ngIf="!sidenavOpened">
+          <div class="user-avatar">{{currentUserInitials}}</div>
+        </div>
+
+        <!-- Şifre Değiştirme ve Çıkış butonlarını alt kısımda gösterelim -->
+        <a mat-list-item (click)="openChangePasswordDialog()" class="password-change-button">
+          <mat-icon>vpn_key</mat-icon>
+          <span *ngIf="sidenavOpened">Şifre Değiştir</span>
+        </a>
+        <a mat-list-item (click)="logout()" class="logout-button">
+          <mat-icon>exit_to_app</mat-icon>
+          <span *ngIf="sidenavOpened">Çıkış</span>
+        </a>
+      </mat-nav-list>
+    </div>
+
+    <div class="content" [ngClass]="{'expanded': !sidenavOpened}">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>

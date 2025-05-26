@@ -1,0 +1,369 @@
+@use 'sass:color'; // SASS color modülünü import edelim
+
+:host {
+  display: block;
+  min-width: 800px; // 600px'den 800px'e arttırıldı
+}
+
+.vehicle-info {
+  margin-bottom: 20px;
+  background: #f8fafc;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    background: white;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+
+    p {
+      margin: 0;
+      padding: 12px;
+      background: #f8fafc;
+      border-radius: 6px;
+      border-left: 3px solid #1976d2;
+      
+      strong {
+        color: #1976d2;
+        margin-right: 12px;
+        font-weight: 500;
+        font-size: 0.9em;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+    }
+  }
+}
+
+.repair-info {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+
+  h3 {
+    color: #2c3e50;
+    font-size: 1.2em;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #e0e0e0;
+    font-weight: 500;
+  }
+
+  mat-form-field {
+    width: 100%;
+  }
+}
+
+// Dialog başlığı için stil
+::ng-deep .mat-dialog-title {
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  color: #1976d2;
+  font-size: 1.75em;
+  border-bottom: 2px solid #e0e0e0;
+  font-weight: 500;
+}
+
+// Dialog actions (butonlar) için stiller
+::ng-deep .mat-dialog-actions {
+  padding: 16px 24px;
+  margin-bottom: 0;
+  background: #f8fafc;
+  border-top: 1px solid #e0e0e0;
+  gap: 12px;
+
+  button {
+    min-width: 120px;
+    padding: 8px 24px;
+    font-weight: 500;
+    
+    &[color="primary"] {
+      background-color: #4caf50 !important;
+      
+      &:hover {
+        background-color: color.adjust(#4caf50, $lightness: -5%) !important; // darken yerine color.adjust kullandık
+      }
+    }
+
+    &[color="warn"] {
+      background-color: #f44336 !important;
+      color: white !important;
+      
+      &:hover {
+        background-color: color.adjust(#f44336, $lightness: -5%) !important; // darken yerine color.adjust kullandık
+      }
+    }
+  }
+}
+
+// Dialog content padding
+::ng-deep .mat-dialog-content {
+  max-height: 70vh;
+  padding: 0 24px;
+  margin: 0;
+}
+
+// Modal arka planı için stil
+::ng-deep .mat-dialog-container {
+  padding: 24px;
+  border-radius: 8px;
+  background-color: #fff;
+  width: auto !important; // Genişlik otomatik olsun
+  overflow-x: hidden !important; // Yatay taşmayı engelle
+}
+
+::ng-deep .cdk-overlay-pane {
+  max-width: 95vw !important; // Maksimum genişlik ekranın 95%'i olsun
+}
+
+// Başlık stilini güncelle
+::ng-deep .mdc-dialog-title,
+::ng-deep .mat-dialog-title {
+  text-align: center !important;
+  color: #ff9800 !important;
+  border-bottom: 2px solid #ffb74d !important;
+  font-weight: 700 !important;
+}
+
+mat-dialog-content {
+  max-height: 80vh;
+  padding: 16px;
+}
+
+// Modal içeriği için daha kompakt stil
+h2.mat-dialog-title {
+  color: #ff9800;
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px; // Azaltıldı: 20px -> 10px
+  padding-bottom: 5px; // Azaltıldı: 10px -> 5px
+  border-bottom: 2px solid #ff9800;
+  font-size: 1.2rem; // Azaltıldı: 1.5rem -> 1.2rem
+}
+
+h3 {
+  color: #333;
+  font-size: 1rem; // Azaltıldı: 1.2rem -> 1rem
+  margin-top: 8px; // Azaltıldı: 16px -> 8px
+  margin-bottom: 6px; // Azaltıldı: 12px -> 6px
+  font-weight: 500;
+  border-left: 4px solid #ff9800;
+  padding-left: 6px; // Azaltıldı: 8px -> 6px
+}
+
+h4 {
+  color: #555;
+  font-size: 0.9rem; // Azaltıldı: 1rem -> 0.9rem
+  margin-top: 6px; // Azaltıldı: 12px -> 6px
+  margin-bottom: 4px; // Azaltıldı: 8px -> 4px
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  
+  mat-icon {
+    margin-right: 6px; // Azaltıldı: 8px -> 6px
+    color: #ff9800;
+    font-size: 16px; // Ekstra olarak ikon boyutu düşürüldü
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.vehicle-section, .repair-section {
+  margin-bottom: 10px; // Azaltıldı: 20px -> 10px
+  padding: 10px; // Azaltıldı: 16px -> 10px
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); // Azaltıldı: 250px -> 200px
+  gap: 8px; // Azaltıldı: 12px -> 8px
+}
+
+.info-item {
+  padding: 5px 8px; // Azaltıldı: 8px 12px -> 5px 8px
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  font-size: 0.75rem; // Azaltıldı: 0.8rem -> 0.75rem
+  color: #666;
+  margin-bottom: 2px; // Azaltıldı: 4px -> 2px
+  font-weight: 500;
+}
+
+.value {
+  font-size: 0.9rem; // Azaltıldı: 1rem -> 0.9rem
+  color: #333;
+  font-weight: 400;
+}
+
+mat-divider {
+  margin: 8px 0; // Azaltıldı: 16px -> 8px
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px; // Azaltıldı: 16px -> 8px
+  
+  .full-width {
+    width: 100%;
+  }
+  
+  .two-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  // Yeni: Üç kolonlu grid için
+  .three-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px; // Azaltıldı: 16px -> 8px
+  }
+}
+
+.parts-section {
+  background-color: #f5f5f5;
+  padding: 16px;
+  border-radius: 8px;
+  border-left: 3px solid #ff9800;
+  
+  .parts-info {
+    margin-top: 8px;
+  }
+  
+  .hint {
+    margin: 0;
+    font-style: italic;
+    color: #666;
+    font-size: 0.9rem;
+  }
+}
+
+mat-dialog-actions {
+  padding: 10px; // Azaltıldı: 16px -> 10px
+  margin-bottom: 0;
+  justify-content: center; // Ortalama için ekle
+  
+  button {
+    min-width: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: 0 10px; // Butonlar arası boşluk için ekle
+    
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+    
+    &[color="primary"] {
+      background-color: #4caf50 !important;
+      color: white !important;
+      
+      &:hover:not([disabled]) {
+        background-color: color.adjust(#4caf50, $lightness: -5%) !important;
+      }
+      
+      &:disabled {
+        background-color: rgba(0,0,0,0.12) !important;
+        color: rgba(0,0,0,0.38) !important;
+      }
+    }
+    
+    &[color="warn"] {
+      background-color: #f44336 !important;
+      color: white !important;
+      
+      &:hover {
+        background-color: color.adjust(#f44336, $lightness: -5%) !important;
+      }
+    }
+  }
+}
+
+// Form field stilleri
+::ng-deep {
+  .mat-form-field-appearance-outline .mat-form-field-outline {
+    color: #bdbdbd;
+  }
+  
+  .mat-form-field-appearance-outline.mat-focused .mat-form-field-outline-thick {
+    color: #ff9800;
+  }
+  
+  .mat-form-field-appearance-outline.mat-form-field-invalid .mat-form-field-outline-thick {
+    color: #f44336;
+  }
+  
+  .mat-select-arrow {
+    color: #ff9800;
+  }
+  
+  .mat-form-field-appearance-outline .mat-form-field-infix {
+    padding: 0.5em 0;
+  }
+  
+  .mat-form-field-suffix .mat-icon {
+    color: #ff9800;
+  }
+
+  // Dropdown panel ve option'ların background rengini beyaz yap
+  .mat-mdc-select-panel,
+  .mat-select-panel {
+    background-color: white !important;
+  }
+  
+  .mat-mdc-option,
+  .mat-option {
+    background-color: white !important;
+    
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.04) !important;
+    }
+    
+    &.mdc-list-item--selected,
+    &.mat-selected {
+      background-color: rgba(255, 152, 0, 0.12) !important;
+    }
+  }
+
+  // Textarea için satır sayısını düşürelim
+  textarea.mat-input-element[rows="3"] {
+    min-height: 60px; // Daha az satır
+  }
+  
+  textarea.mat-input-element[rows="2"] {
+    min-height: 40px; // Daha az satır
+  }
+  
+  // Form field içindeki boşlukları azalt
+  .mat-form-field-wrapper {
+    margin-bottom: 0 !important;
+    padding-bottom: 0.8em !important;
+  }
+  
+  .mat-form-field-infix {
+    padding: 0.4em 0 !important;
+  }
+}

@@ -1,0 +1,6 @@
+-- Simulated database backup for arac_sevk
+-- Created at: 2025-04-28T19:07:25.057Z
+-- This is not a real backup, pg_dump failed with error: Command failed: set "PGPASSWORD=admin123" && pg_dump -U postgres -h localhost -p 5432 -d arac_sevk -Fc -f "C:\work\u1\arac sevk merkezi\backend\backups\2025-04-28T19-07-25.021Z-aaaaaa-4b0feac4.dump"
+'pg_dump' is not recognized as an internal or external command,
+operable program or batch file.
+

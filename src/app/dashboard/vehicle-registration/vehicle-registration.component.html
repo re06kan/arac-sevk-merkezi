@@ -1,0 +1,223 @@
+<div class="vehicle-registration-container">
+  <div class="form-section" id="vehicleForm">
+    <h2>Araç Kayıt Formu</h2>
+    <form [formGroup]="vehicleForm" (ngSubmit)="onSubmit()">
+      <div class="field-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Askeri Plaka</mat-label>
+          <input matInput 
+                 formControlName="militaryPlate" 
+                 placeholder="Askeri plaka giriniz"
+                 (input)="toUpperCase($event)"
+                 (keypress)="onlyAlphanumericAndSpace($event)"
+                 maxlength="15"
+                 style="text-transform: uppercase;">
+          <mat-error *ngIf="vehicleForm.get('militaryPlate')?.errors?.['required']">Askeri plaka zorunludur</mat-error>
+          <mat-error *ngIf="vehicleForm.get('militaryPlate')?.errors?.['pattern']">Sadece büyük harf ve rakam giriniz</mat-error>
+          <mat-error *ngIf="vehicleForm.get('militaryPlate')?.errors?.['maxlength']">En fazla 15 karakter girebilirsiniz</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Sivil Plaka</mat-label>
+          <input matInput 
+                 formControlName="civilianPlate" 
+                 placeholder="Sivil plaka giriniz"
+                 (input)="toUpperCase($event)"
+                 (keypress)="onlyAlphanumericAndSpace($event)"
+                 maxlength="15"
+                 style="text-transform: uppercase;">
+          <mat-error *ngIf="vehicleForm.get('civilianPlate')?.errors?.['required']">Sivil plaka zorunludur</mat-error>
+          <mat-error *ngIf="vehicleForm.get('civilianPlate')?.errors?.['pattern']">Sadece büyük harf ve rakam giriniz</mat-error>
+          <mat-error *ngIf="vehicleForm.get('civilianPlate')?.errors?.['maxlength']">En fazla 15 karakter girebilirsiniz</mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="field-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Şasi Numarası</mat-label>
+          <input matInput 
+                 formControlName="chassisNumber" 
+                 placeholder="Şasi numarası giriniz"
+                 (input)="toUpperCase($event)"
+                 (keypress)="onlyAlphanumericAndSpace($event)"
+                 maxlength="20"
+                 style="text-transform: uppercase;">
+          <mat-error *ngIf="vehicleForm.get('chassisNumber')?.errors?.['required']">Şasi numarası zorunludur</mat-error>
+          <mat-error *ngIf="vehicleForm.get('chassisNumber')?.errors?.['pattern']">Sadece büyük harf ve rakam giriniz</mat-error>
+          <mat-error *ngIf="vehicleForm.get('chassisNumber')?.errors?.['maxlength']">En fazla 20 karakter girebilirsiniz</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Motor Numarası</mat-label>
+          <input matInput 
+                 formControlName="engineNumber" 
+                 placeholder="Motor numarası giriniz"
+                 (input)="toUpperCase($event)"
+                 (keypress)="onlyAlphanumericAndSpace($event)"
+                 maxlength="20"
+                 style="text-transform: uppercase;">
+          <mat-error *ngIf="vehicleForm.get('engineNumber')?.errors?.['required']">Motor numarası zorunludur</mat-error>
+          <mat-error *ngIf="vehicleForm.get('engineNumber')?.errors?.['pattern']">Sadece büyük harf ve rakam giriniz</mat-error>
+          <mat-error *ngIf="vehicleForm.get('engineNumber')?.errors?.['maxlength']">En fazla 20 karakter girebilirsiniz</mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="field-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Araç Markası</mat-label>
+          <input matInput 
+                 formControlName="brand" 
+                 placeholder="Araç markası giriniz"
+                 maxlength="25"
+                 (input)="toUpperCase($event)"
+                 style="text-transform: uppercase;">
+          <mat-error *ngIf="vehicleForm.get('brand')?.errors?.['required']">Araç markası zorunludur</mat-error>
+          <mat-error *ngIf="vehicleForm.get('brand')?.errors?.['maxlength']">En fazla 25 karakter girebilirsiniz</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Araç Cinsi</mat-label>
+          <mat-select formControlName="type" placeholder="Araç cinsi seçiniz">
+            <mat-option *ngFor="let type of vehicleTypes" [value]="type.value">
+              {{type.label}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="vehicleForm.get('type')?.errors?.['required']">Araç cinsi seçimi zorunludur</mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="field-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Araç Modeli</mat-label>
+          <input matInput 
+                formControlName="model" 
+                placeholder="Araç modeli giriniz"
+                maxlength="25"
+                (input)="toUpperCase($event)"
+                style="text-transform: uppercase;">
+          <mat-error *ngIf="vehicleForm.get('model')?.errors?.['required']">Araç modeli zorunludur</mat-error>
+          <mat-error *ngIf="vehicleForm.get('model')?.errors?.['maxlength']">En fazla 25 karakter girebilirsiniz</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Tahsis Edilen Makam</mat-label>
+          <input matInput 
+                formControlName="assignedAuthority" 
+                placeholder="Tahsis edilen makam giriniz"
+                maxlength="25"
+                (input)="toUpperCase($event)"
+                style="text-transform: uppercase;">
+          <mat-error *ngIf="vehicleForm.get('assignedAuthority')?.errors?.['required']">Tahsis edilen makam zorunludur</mat-error>
+          <mat-error *ngIf="vehicleForm.get('assignedAuthority')?.errors?.['maxlength']">En fazla 25 karakter girebilirsiniz</mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="button-group">
+        <button mat-raised-button 
+                [ngClass]="{'blue-button': !vehicleForm.valid, 'green-button': vehicleForm.valid}" 
+                type="submit" 
+                [disabled]="vehicleForm.invalid" 
+                *ngIf="!isEditMode">
+          Kaydet
+        </button>
+        <ng-container *ngIf="isEditMode">
+          <button mat-raised-button color="primary" type="button" class="update-button" [disabled]="vehicleForm.invalid" (click)="updateVehicle()">
+            Güncelle
+          </button>
+          <button mat-raised-button color="basic" class="cancel-button" type="button" style="margin-left: auto;" (click)="cancelEdit()">
+            İptal
+          </button>
+        </ng-container>
+      </div>
+    </form>
+  </div>
+
+  <div class="table-section">
+    <h2>Araç Listesi</h2>
+    <mat-form-field>
+        <mat-label>Filtrele</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Arama yapın..." #input>
+      </mat-form-field>
+    <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+      <ng-container matColumnDef="militaryPlate">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: bold;">Askeri Plaka</th>
+        <td mat-cell *matCellDef="let vehicle">{{vehicle.militaryPlate}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="civilianPlate">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: bold;">Sivil Plaka</th>
+        <td mat-cell *matCellDef="let vehicle">{{vehicle.civilianPlate}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="chassisNumber">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: bold;">Şasi Numarası</th>
+        <td mat-cell *matCellDef="let vehicle">{{vehicle.chassisNumber}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="engineNumber">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: bold;">Motor Numarası</th>
+        <td mat-cell *matCellDef="let vehicle">{{vehicle.engineNumber}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="brand">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: bold;">Araç Markası</th>
+        <td mat-cell *matCellDef="let vehicle">{{vehicle.brand}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="model">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: bold;">Araç Modeli</th>
+        <td mat-cell *matCellDef="let vehicle">{{vehicle.model}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="type">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: bold;">Araç Cinsi</th>
+        <td mat-cell *matCellDef="let vehicle">
+          {{getVehicleTypeLabel(vehicle.type)}}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="assignedAuthority">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: bold;">Tahsis Edilen Makam</th>
+        <td mat-cell *matCellDef="let vehicle">{{vehicle.assignedAuthority}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="create_date">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: bold;">Kayıt Tarihi</th>
+        <td mat-cell *matCellDef="let vehicle">{{vehicle.create_date | date:'dd.MM.yyyy HH:mm'}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef style="font-weight: bold;">İşlemler</th>
+        <td mat-cell *matCellDef="let vehicle">
+          <a mat-icon-button 
+             [href]="'#vehicleForm'" 
+             class="edit-button" 
+             (click)="$event.preventDefault(); editVehicle(vehicle)" 
+             matTooltip="Düzenle">
+            <mat-icon>edit</mat-icon>
+          </a>
+        </td>
+      </ng-container>
+      
+      <ng-container matColumnDef="visibility">
+        <th mat-header-cell *matHeaderCellDef style="font-weight: bold;">Durum</th>
+        <td mat-cell *matCellDef="let vehicle">
+          <button mat-icon-button (click)="toggleVisibility(vehicle)">
+            <mat-icon [ngClass]="{'status-active': vehicle.visibility === 0, 'status-inactive': vehicle.visibility === 1}">
+              {{vehicle.visibility === 0 ? 'visibility' : 'visibility_off'}}
+            </mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+    <mat-paginator [pageSize]="10"
+                   [pageSizeOptions]="[5, 10, 25, 100]"
+                   aria-label="Sayfa seçin">
+    </mat-paginator>
+  </div>
+</div>

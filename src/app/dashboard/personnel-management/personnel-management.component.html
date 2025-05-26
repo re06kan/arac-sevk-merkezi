@@ -1,0 +1,99 @@
+<div class="personnel-container">
+   <div class="form-section">
+    <h2>{{ editMode ? 'Personel Düzenle' : 'Yeni Personel Ekle' }}</h2>
+    <form [formGroup]="personnelForm" (ngSubmit)="onSubmit()">
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>İsim</mat-label>
+          <input matInput formControlName="name" placeholder="Örn: ALBAY AHMET YILMAZ">
+          <mat-error *ngIf="personnelForm.get('name')?.invalid">{{ getNameErrorMessage() }}</mat-error>
+        </mat-form-field>
+      </div>
+      
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Rütbe/Makam</mat-label>
+          <input matInput formControlName="rank" placeholder="Örn: TABUR KOMUTANI">
+          <mat-error *ngIf="personnelForm.get('rank')?.invalid">{{ getRankErrorMessage() }}</mat-error>
+        </mat-form-field>
+      </div>
+      
+      <div class="button-row">
+        <button type="submit" mat-raised-button color="primary" [disabled]="personnelForm.invalid">
+          {{ editMode ? 'Güncelle' : 'Kaydet' }}
+        </button>
+        <button *ngIf="editMode" type="button" mat-stroked-button (click)="resetForm()">
+          İptal
+        </button>
+      </div>
+    </form>
+  </div>
+  
+  <div class="list-section">
+    <h2>Personel Listesi</h2>
+    
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Filtrele</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="İsim veya rütbe ile arama yapın...">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+    
+    <div class="table-container">
+      <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+        
+        <!-- ID Sütunu -->
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
+          <td mat-cell *matCellDef="let personnel">{{ personnel.id }}</td>
+        </ng-container>
+        
+        <!-- İsim Sütunu -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>İsim</th>
+          <td mat-cell *matCellDef="let personnel">{{ personnel.name }}</td>
+        </ng-container>
+        
+        <!-- Rütbe Sütunu -->
+        <ng-container matColumnDef="rank">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Rütbe/Makam</th>
+          <td mat-cell *matCellDef="let personnel">{{ personnel.rank }}</td>
+        </ng-container>
+        
+        <!-- Oluşturulma Tarihi Sütunu -->
+        <ng-container matColumnDef="created_at">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Eklenme Tarihi</th>
+          <td mat-cell *matCellDef="let personnel">
+            {{ personnel.created_at ? (personnel.created_at | date:'dd.MM.yyyy HH:mm') : 'Tarih Belirsiz' }}
+          </td>
+        </ng-container>
+        
+        <!-- Durum Sütunu -->
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Durum</th>
+          <td mat-cell *matCellDef="let personnel">
+            <button mat-icon-button (click)="toggleVisibility(personnel)">
+              <mat-icon [ngClass]="{'status-active': personnel.visibility !== 1, 'status-inactive': personnel.visibility === 1}">
+                {{ personnel.visibility === 1 ? 'visibility_off' : 'visibility' }}
+              </mat-icon>
+            </button>
+          </td>
+        </ng-container>
+        
+        <!-- İşlemler Sütunu -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>İşlemler</th>
+          <td mat-cell *matCellDef="let personnel">
+            <button mat-icon-button color="primary" (click)="editPersonnel(personnel, $event)" class="edit-button">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+        
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+    
+    <mat-paginator [pageSizeOptions]="[12, 24, 48, 60]" showFirstLastButtons></mat-paginator>
+  </div>
+</div>

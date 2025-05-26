@@ -1,0 +1,182 @@
+.vehicle-registration-container {
+  padding: 20px 50px 20px 10px; // Sağ kenar boşluğunu 20px'den 30px'e çıkardım
+  max-width: none; // Maksimum genişlik sınırlaması kaldırıldı
+  width: calc(100% - 80px); // Toplam boşlukları düşürdüm (10px sol + 30px sağ = 40px)
+  margin: 0; // Ortalama iptal edildi, sol başlayacak
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  .form-section {
+    width: 100%;
+    padding: 1.5rem; // 1rem'den 1.5rem'e arttırdım (iç boşluk)
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    height: auto; // fixed 500px yerine auto yaptım
+    max-height: 500px; // Maximum yüksekliği korumak için
+    overflow-y: auto;
+
+    form {
+      display: grid;
+      gap: 10px; // 0px yerine 10px ekledim (form öğeleri arası boşluk)
+
+      .field-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+
+      button {
+        button {
+          align-self: flex-start;
+          margin-top: 1rem;
+          background-color: #1976d2;
+          color: white;
+        }
+      }
+    }
+    h2 {
+      color: #1976d2;
+      margin-bottom: 1.5rem;
+    }
+  }
+
+  .table-section {
+    width: 100%;
+    padding: 1.5rem; // 1rem'den 1.5rem'e arttırdım (iç boşluk)
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    height: 700px;
+    overflow-y: auto;
+
+    table {
+      width: 100%;
+      margin-top: 1rem;
+      border-radius: 4px 4px 0 0;
+      overflow: hidden;
+
+      .mat-mdc-row {
+        height: 40px !important;
+      }
+    }
+
+    .mat-mdc-paginator {
+      border-radius: 0 0 4px 4px;
+    }
+
+    .mat-mdc-row {
+      height: 45px !important;
+    }
+  }
+  h2 {
+    color: #1976d2;
+    margin-bottom: 1.5rem;
+  }
+}
+
+.button-group {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+  width: 100%;
+
+  button {
+    min-width: 120px;
+  }
+}
+
+.blue-button {
+  background-color: #1976d2;
+  color: white;
+  &:disabled {
+    background-color: rgba(25, 118, 210, 0.6);
+  }
+}
+
+.green-button {
+  background-color: #4caf50 !important; 
+  color: white !important;
+  &:disabled {
+    background-color: rgba(76, 175, 80, 0.6) !important;
+  }
+}
+
+.status-active {
+  color: #4caf50; // yeşil
+}
+
+.status-inactive {
+  color: #f44336; // kırmızı
+}
+
+.edit-button {
+  .mat-icon {
+    color: #FFD700 !important; // sarı
+  }
+}
+
+.update-button {
+  background-color: #4caf50 !important; // yeşil
+  color: white !important;
+}
+
+.cancel-button {
+  background-color: #1976d2 !important; // mavi
+  color: white !important;
+}
+
+.update-button:disabled {
+  background-color: rgba(76, 175, 80, 0.6) !important; // yarı saydam yeşil
+}
+
+.cancel-button:disabled {
+  background-color: rgba(25, 118, 210, 0.6) !important; // yarı saydam mavi
+}
+
+::ng-deep .success-snackbar {
+  background-color: #4caf50 !important;
+  color: white !important;
+  margin-top: 100px !important;
+}
+
+::ng-deep .error-snackbar {
+  background-color: #f44336 !important;
+  color: white !important;
+  margin-top: 100px !important;
+}
+
+// Dropdown arka plan rengi ve gölge
+::ng-deep .mat-mdc-select-panel {
+  background-color: white !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+::ng-deep .mat-mdc-option {
+  background-color: white !important;
+  min-height: 33px !important;
+  padding: 0px 8px !important;
+  &:hover {
+    background-color: #f5f5f5 !important;
+  }
+}
+
+// Responsive tasarım için medya sorgusu ekledim
+@media (max-width: 768px) {
+  .vehicle-registration-container {
+    padding: 10px 15px 10px 5px; // Mobil cihazlarda sağ boşluğu 15px yaparak düzenledim
+    max-width: 100%; // Mobil cihazlarda maksimum genişlik kaldırıldı
+    width: calc(100% - 20px); // Toplam boşlukları düşürdüm (5px sol + 15px sağ = 20px)
+    
+    .form-section, 
+    .table-section {
+      padding: 1rem; // Mobil cihazlarda daha az iç boşluk
+    }
+    
+    .field-row {
+      grid-template-columns: 1fr !important; // Mobilde tek kolon
+    }
+  }
+}
