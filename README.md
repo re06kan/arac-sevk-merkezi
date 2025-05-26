@@ -276,22 +276,22 @@ Aşağıda sistemin temel özelliklerine ilişkin ekran görüntüleri bulunmakt
 [![Giriş Ekranı]([src/assets/klavuz/giris-ekrani.png](https://github.com/user-attachments/assets/f45de4ec-8d40-40a7-ad00-a5d3801bbc80))](https://github.com/re06kan/arac-sevk-merkezi/issues/1#issue-3092021552)
 
 ### Ana Sayfa
-![Ana Sayfa](src/assets/klavuz/ana-sayfa.png)
+[![Ana Sayfa](src/assets/klavuz/ana-sayfa.png)](https://github.com/re06kan/arac-sevk-merkezi/issues/2#issue-3092026220)
 
 ### Araç Kayıt İşlemleri
-![Araç Kayıt](src/assets/klavuz/arac-kayit.png)
+[![Araç Kayıt](src/assets/klavuz/arac-kayit.png)](https://github.com/re06kan/arac-sevk-merkezi/issues/3#issue-3092027436)
 
 ### Görev Oluşturma
-![Görev Oluşturma](src/assets/klavuz/gorev-olusturma.png)
+[![Görev Oluşturma](src/assets/klavuz/gorev-olusturma.png)](https://github.com/re06kan/arac-sevk-merkezi/issues/4#issue-3092028190)
 
 ### Kademe İşlemleri
-![Kademe İşlemleri](src/assets/klavuz/kademe-islemleri.png)
+[![Kademe İşlemleri](src/assets/klavuz/kademe-islemleri.png)](https://github.com/re06kan/arac-sevk-merkezi/issues/5#issue-3092028996)
 
 ### Raporlar
-![Raporlar](src/assets/klavuz/raporlar.png)
+[![Raporlar](src/assets/klavuz/raporlar.png)](https://github.com/re06kan/arac-sevk-merkezi/issues/6#issue-3092029717)
 
 ### Sistem Logları
-![Sistem Logları](src/assets/klavuz/sistem-loglari.png)
+[![Sistem Logları](src/assets/klavuz/sistem-loglari.png)](https://github.com/re06kan/arac-sevk-merkezi/issues/7#issue-3092030454)
 
 > Not: Görseller, eğitim amaçlı olup gerçek verileri içermemektedir.
 
