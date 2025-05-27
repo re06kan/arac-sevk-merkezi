@@ -165,7 +165,7 @@ pg_restore -U postgres -d arac_sevk "C:\work\u1\arac sevk merkezi\db\260525.back
 
 > **Önemli Not:** Veritabanında varsayılan olarak yönetici hesabı oluşturulmuştur:
 > - **Kullanıcı Adı:** 11111111111
-> - **Şifre:** Rekan2025.05
+> - **Şifre:** Password1234.!
 > - Bu hesap super user yetkilerine sahiptir ve sistem bütünlüğü için veritabanı seviyesinde silinmeye karşı korunmaktadır.
 
 ## Uygulamayı Çalıştırma
