@@ -23,17 +23,12 @@ Aşağıda sistemin temel özelliklerine ilişkin ekran görüntüleri bulunmakt
 ### Giriş Ekranı
 ![Image](https://github.com/user-attachments/assets/f45de4ec-8d40-40a7-ad00-a5d3801bbc80)
 
-### Ana Sayfa
-![Image](https://github.com/user-attachments/assets/c1782ed1-8830-475a-b818-2e3855199005)
-
 ### Araç Kayıt İşlemleri
 ![Image](https://github.com/user-attachments/assets/ea095e0e-0a09-4c62-83e7-0f22db261643)
 
 ### Raporlar
 ![Image](https://github.com/user-attachments/assets/9eb67d8c-3974-46eb-a346-c41f1c569330)
 
-### Sistem Logları
-![Image](https://github.com/user-attachments/assets/65f1f682-748b-4978-863d-d4d3f88387fa)
 
 > Not: Görseller, eğitim amaçlı olup gerçek verileri içermemektedir.
 
