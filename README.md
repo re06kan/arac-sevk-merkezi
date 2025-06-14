@@ -210,6 +210,21 @@ Proje klasöründe bulunan `start-app.bat` dosyası, uygulamayı tek tıklamayla
 
 Bu batch dosyası, özellikle teknik bilgisi olmayan kullanıcıların sistemi kolayca başlatabilmesi için geliştirilmiştir.
 
+### Görünmez Başlatma (Windows için)
+
+Proje klasöründe bulunan `start.vbs` dosyası, uygulamayı komut penceresi göstermeden başlatmak için geliştirilmiştir:
+
+1. Windows Dosya Gezgininde `start.vbs` dosyasına çift tıklayın
+2. VBS script otomatik olarak:
+   - Backend Node.js sunucusunu görünmez şekilde (komut penceresi olmadan) başlatır
+   - 3 saniye bekleyerek sunucunun hazır olmasını sağlar
+   - Varsayılan web tarayıcınızda uygulamayı açar (http://localhost:3000)
+   - Küçük bir bilgi mesajı göstererek uygulamanın başlatıldığını bildirir
+
+Bu VBS script, `start-app.bat` dosyasına göre daha sessiz ve görsel olarak daha temiz bir başlatma sağlar. Özellikle son kullanıcılar için uygundur. Uygulamayı kapatmak için Görev Yöneticisi'nden `node.exe` işlemini sonlandırmanız gerekir.
+
+> **Not:** VBS script, bilgisayar açılışında otomatik olarak çalışacak şekilde de yapılandırılabilir.
+
 ## Offline Kullanım
 
 Araç Sevk Merkezi uygulaması, internet bağlantısı olmayan ortamlarda da çalışacak şekilde tasarlanmıştır. Offline kullanım için:
