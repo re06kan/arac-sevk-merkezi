@@ -5,8 +5,8 @@ echo.
 :: Backend dizinine git
 cd backend
 
-:: Node.js sunucusunu yeni bir konsol penceresinde başlat
-start cmd /k "echo Node.js sunucusu baslatiliyor... && node server.js"
+:: Node.js sunucusunu yeni bir konsolda minimize edilmiş olarak başlat
+start /min cmd /k "echo Node.js sunucusu baslatiliyor... && node server.js"
 
 :: 3 saniye bekle (sunucunun başlaması için)
 timeout /t 3 /nobreak > nul
@@ -17,5 +17,5 @@ start http://localhost:3000
 
 echo.
 echo Uygulama baslatildi!
-echo Kapatmak icin acilan konsol penceresinde Ctrl+C tuslarina basin
+echo Kapatmak icin system tray'de minimize edilmis konsol penceresini bulun.
 pause

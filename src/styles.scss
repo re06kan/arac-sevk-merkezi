@@ -30,7 +30,7 @@ body {
 
 .cdk-overlay-pane-no-pointer-events {
   pointer-events: none;
-  
+
   .mat-dialog-container {
     pointer-events: auto;
   }
@@ -51,28 +51,28 @@ body {
     height: auto !important;
     max-height: 90vh !important; // Maksimum yükseklik sınırı ekle
   }
-  
+
   .cdk-overlay-pane {
     max-width: 95vw !important;
   }
-  
+
   .mat-dialog-content {
     overflow-x: hidden;
     padding: 0 12px !important; // İçerik padding'i azalt
-    margin: 0 !important; 
+    margin: 0 !important;
     max-height: calc(90vh - 130px) !important; // İçerik için maksimum yükseklik
   }
-  
+
   // Kompakt görünüm için form alanlarını optimize et
   .mat-form-field-wrapper {
     margin-bottom: 0 !important;
     padding-bottom: 0.8em !important;
   }
-  
+
   .mat-form-field-infix {
     padding: 0.4em 0 !important;
   }
-  
+
   // Butonları daha kompakt yap
   .mat-dialog-actions {
     padding: 8px !important;
@@ -91,7 +91,7 @@ body {
     height: auto !important;
     max-height: none !important; // max-height sınırlanmadı
   }
-  
+
   .mat-dialog-content {
     overflow: hidden !important; // Scroll kaldırıldı
     max-height: none !important; // max-height sınırlanmadı
@@ -109,7 +109,7 @@ body {
     width: auto !important;
     height: auto !important;
   }
-  
+
   .mat-dialog-content {
     overflow-y: auto !important; // Ana içerikte dikey scroll aktif
     overflow-x: hidden !important; // Yatay scroll yok
@@ -126,17 +126,17 @@ body {
     border-radius: 8px;
     overflow: hidden !important; // Ana container'da scroll olmamalı
   }
-  
+
   .mat-dialog-content {
     overflow-y: auto !important; // İçerikte dikey scroll aktif
     overflow-x: hidden !important; // Yatay scroll yok
     max-height: 75vh !important; // Ekran yüksekliğinin %75'i
   }
-  
+
   // İç içe elementlerde scroll olmaması için
-  .description-box, 
-  .vehicle-section, 
-  .maintenance-section, 
+  .description-box,
+  .vehicle-section,
+  .maintenance-section,
   .repair-section {
     overflow: visible !important; // Alt elementlerde scroll olmamalı
   }
@@ -156,85 +156,85 @@ body {
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 24px;
   margin-bottom: 24px;
-  
+
   .vehicle-button {
     height: auto;
     padding: 0;
     border-radius: 12px;
     overflow: hidden;
     display: block;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-    
+
     &:hover {
       transform: translateY(-4px);
-      box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
     }
-    
+
     &.musait {
       background-color: #e8f5e9;
       border-left: 6px solid #4caf50;
     }
-    
+
     &.gorevde {
       background-color: #ffebee;
       border-left: 6px solid #f44336;
     }
-    
+
     &.kademede {
       background-color: #fff3e0;
       border-left: 6px solid #ff9800;
     }
-    
+
     &.uzun-yol {
       background-color: #e3f2fd;
       border-left: 6px solid #2196f3;
     }
-    
+
     .vehicle-content {
       padding: 16px;
-      
+
       .header-section {
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
         margin-bottom: 12px;
-        
+
         .plate-section {
           .military-plate {
             font-size: 1.2rem;
             font-weight: 600;
             color: #333;
           }
-          
+
           .civilian-plate {
             font-size: 0.9rem;
             color: #666;
             margin-top: 4px;
           }
         }
-        
+
         .status-chip {
           padding: 6px 12px;
           border-radius: 16px;
           font-size: 0.85rem;
           font-weight: 500;
-          
+
           &.musait {
             background-color: rgba(76, 175, 80, 0.2);
             color: #2e7d32;
           }
-          
+
           &.gorevde {
             background-color: rgba(244, 67, 54, 0.2);
             color: #c62828;
           }
-          
+
           &.kademede {
             background-color: rgba(255, 152, 0, 0.2);
             color: #ef6c00;
           }
-          
+
           &.uzun-yol {
             background-color: rgba(33, 150, 243, 0.2);
             color: #1565c0;
@@ -251,30 +251,30 @@ body {
   flex-wrap: wrap;
   gap: 24px;
   margin-bottom: 24px;
-  
+
   .search-section {
     flex: 1;
     min-width: 300px;
-    
+
     mat-form-field {
       width: 100%;
     }
   }
-  
+
   .total-vehicles {
     flex: 2;
     min-width: 500px;
-    
+
     mat-card {
       border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
       .vehicle-stats {
         display: flex;
         flex-wrap: wrap;
         gap: 16px;
         justify-content: space-around;
-        
+
         .stat-item {
           display: flex;
           flex-direction: column;
@@ -283,35 +283,35 @@ body {
           border-radius: 8px;
           min-width: 100px;
           text-align: center;
-          
+
           mat-icon {
             margin-bottom: 8px;
             color: #666;
           }
-          
+
           span {
             font-weight: 500;
             color: #333;
           }
-          
+
           &.available {
             mat-icon {
               color: #4caf50;
             }
           }
-          
+
           &.busy {
             mat-icon {
               color: #f44336;
             }
           }
-          
+
           &.uzun-yol {
             mat-icon {
               color: #2196f3;
             }
           }
-          
+
           &.maintenance {
             mat-icon {
               color: #ff9800;
@@ -325,7 +325,8 @@ body {
 
 /* Snackbar styles */
 .success-snackbar {
-  background-color: #4caf50 !important; /* Bright green color */
+  background-color: #4caf50 !important;
+  /* Bright green color */
   color: white !important;
 }
 
@@ -334,7 +335,8 @@ body {
 }
 
 .error-snackbar {
-  background-color: #f44336 !important; /* Red color for error messages */
+  background-color: #f44336 !important;
+  /* Red color for error messages */
   color: white !important;
 }
 
@@ -345,13 +347,13 @@ body {
 @media screen and (max-width: 960px) {
   .top-section {
     flex-direction: column;
-    
+
     .search-section,
     .total-vehicles {
       min-width: 100% !important;
     }
   }
-  
+
   .vehicle-grid {
     grid-template-columns: 1fr;
   }
