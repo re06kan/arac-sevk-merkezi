@@ -254,7 +254,66 @@ app.post('/api/vehicles', async (req, res) => {
   }
 });
 
-// Tekil araç detayı getirme endpoint'i
+// ÖNEMLİ: Araçları KM bilgileriyle birlikte getirme endpoint'i - spesifik rota ÖNCE gelmeli
+app.get('/api/vehicles/with-km', async (req, res) => {
+  try {
+    // İsteğe bağlı olarak tarih parametresini al
+    const targetDate = req.query.date ? new Date(req.query.date) : new Date();
+
+    console.log(`KM bilgileri alınıyor, hedef tarih: ${targetDate.toISOString().split('T')[0]}`);
+
+    // Hedef tarihin sonu (gün sonuna kadar)
+    const endOfDay = new Date(targetDate);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    // Önce tüm aktif araçları getir
+    const vehicles = await pool.query(`
+      SELECT id, military_plate, civilian_plate, brand, model, type
+      FROM vehicles
+      WHERE visibility = 0
+      ORDER BY military_plate
+    `);
+
+    // Her bir araç için belirlenen tarihe kadar olan son görev ve KM bilgilerini al
+    const result = [];
+    for (const vehicle of vehicles.rows) {
+      // Aracın görevlerini KM ve tarih bilgisiyle getir
+      const tasks = await pool.query(`
+        SELECT
+          id, start_km, end_km,
+          start_date, end_date, modified_at
+        FROM task_registration
+        WHERE vehicle_id = $1
+          AND (
+            (start_date <= $2) OR
+            (modified_at IS NOT NULL AND modified_at <= $2)
+          )
+        ORDER BY
+          CASE WHEN end_date IS NOT NULL THEN end_date ELSE start_date END DESC,
+          CASE WHEN modified_at IS NOT NULL THEN modified_at ELSE start_date END DESC
+        LIMIT 1
+      `, [vehicle.id, endOfDay]);
+
+      // Araç ve görev bilgilerini birleştir
+      result.push({
+        ...vehicle,
+        tasks: tasks.rows,
+        current_km: tasks.rows[0]?.end_km || tasks.rows[0]?.start_km || null,
+        last_updated: tasks.rows[0]?.modified_at || tasks.rows[0]?.end_date || tasks.rows[0]?.start_date || null
+      });
+    }
+
+    res.json(result);
+  } catch (error) {
+    console.error('Araçlar KM bilgisiyle getirilirken hata oluştu:', error);
+    res.status(500).json({
+      error: 'Araç KM bilgileri alınamadı',
+      details: error.message
+    });
+  }
+});
+
+// Tekil araç detayı getirme endpoint'i - parametre içeren rota SONRA gelmeli
 app.get('/api/vehicles/:id', async (req, res) => {
   try {
     const { id } = req.params;

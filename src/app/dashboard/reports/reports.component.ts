@@ -143,9 +143,9 @@ const TURKISH_DATE_FORMATS = {
     { provide: MAT_DATE_FORMATS, useValue: TURKISH_DATE_FORMATS }
   ],
   imports: [
-    CommonModule, 
-    MatCardModule, 
-    MatIconModule, 
+    CommonModule,
+    MatCardModule,
+    MatIconModule,
     MatDividerModule,
     MatButtonModule,
     ReactiveFormsModule,
@@ -179,7 +179,7 @@ export class ReportsComponent implements OnInit {
   allPersonnel: number[] = [];
   displayedColumns: string[] = [
     'start_date',
-    'military_plate', 
+    'military_plate',
     'driver_name',
     'assigned_authority',
     'ordered_by',
@@ -203,10 +203,17 @@ export class ReportsComponent implements OnInit {
   logStartDate: Date | null = null;
   logEndDate: Date | null = null;
 
+  // Güncel KM için eklenecek değişkenler
+  showKmTable: boolean = false;
+  kmDataSource = new MatTableDataSource<any>([]);
+  kmColumns: string[] = ['plate', 'brand', 'model', 'current_km', 'last_updated']; // Marka ve model sütunları eklendi
+  selectedKmDate: Date | null = null; // Seçilen tarihi tutacak değişken
+
   @ViewChild(BaseChartDirective) chart?: BaseChartDirective;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild('logPaginator') logPaginator!: MatPaginator;
+  @ViewChild('kmPaginator') kmPaginator!: MatPaginator;
 
   public taskDistributionData: ChartData<'pie'> = {
     labels: ['Normal Görev', 'Uzun Yol', 'Kademe'],
@@ -347,17 +354,17 @@ export class ReportsComponent implements OnInit {
         startDate: this.filterForm.value.startDate,
         endDate: this.filterForm.value.endDate
       };
-      
+
       this.taskService.getTaskReport(filters).subscribe({
         next: (data) => {
           console.log('Rapor verisi:', data);
-          
+
           if (!data || data.length === 0) {
             this.noDataMessage = 'Seçilen kriterlere uygun kayıt bulunamadı. Lütfen filtre seçimlerinizi kontrol edin.';
             this.reportData = null;
             return;
           }
-          
+
           this.setupTableData(data);
           this.calculateSummaryStats(data);
           this.updateChartData(data);
@@ -387,7 +394,7 @@ export class ReportsComponent implements OnInit {
       console.error('PDF için veri bulunamadı');
       return;
     }
-    
+
     try {
       // A4 boyutunda yatay PDF oluştur
       const pdf = new jsPDF({
@@ -395,32 +402,32 @@ export class ReportsComponent implements OnInit {
         unit: 'mm',
         format: 'a4',
       }) as jsPDFWithAutoTable;
-      
+
       // Varsayılan font kullan, harici font yükleme girişimini kaldır
       pdf.setFont("helvetica");
-      
+
       // Başlık ekle
       pdf.setFontSize(18);
       pdf.text('Araç Görev Raporu', 14, 15);
-      
+
       // Tarih aralığı bilgisini ekle
-      const startDate = this.filterForm.value.startDate ? 
+      const startDate = this.filterForm.value.startDate ?
         new Date(this.filterForm.value.startDate).toLocaleDateString('tr-TR') : 'Başlangıç';
-      const endDate = this.filterForm.value.endDate ? 
+      const endDate = this.filterForm.value.endDate ?
         new Date(this.filterForm.value.endDate).toLocaleDateString('tr-TR') : 'Bugün';
-      
+
       pdf.setFontSize(12);
       pdf.text(`Tarih Aralığı: ${startDate} - ${endDate}`, 14, 25);
-      
+
       // Özet bilgileri ekle
       pdf.text(`Toplam Görev: ${this.reportData.totalTasks}`, 14, 35);
       pdf.text(`Toplam KM: ${this.reportData.totalKm} KM`, 14, 42);
       pdf.text(`Toplam Süre: ${this.reportData.totalHours} Saat`, 14, 49);
-      
+
       // Sürücü tablosu için başlık
       pdf.setFontSize(14);
       pdf.text('En Çok Göreve Çıkan Sürücüler', 14, 60);
-      
+
       // En iyi sürücülerin tablosu
       const driverRows = this.reportData.topDrivers.map((driver: any, index: number) => [
         (index + 1).toString(), // Sıra
@@ -428,7 +435,7 @@ export class ReportsComponent implements OnInit {
         driver.rank || '', // Rütbe
         driver.taskCount.toString() // Görev sayısı
       ]);
-      
+
       try {
         autoTable(pdf, {
           startY: 65,
@@ -448,25 +455,25 @@ export class ReportsComponent implements OnInit {
       } catch (err) {
         console.error('Sürücü tablosu oluşturma hatası:', err);
       }
-      
+
       // Görev detayları tablosu
       const data = this.tableDataSource.filteredData || [];
-      
+
       // Yeni sayfa için alan kontrolü
       const tableY = pdf.previousAutoTable ? pdf.previousAutoTable.finalY + 20 : 110;
       if (tableY > 180) { // Sayfanın sonuna yaklaştıysa
         pdf.addPage(); // Yeni sayfa ekle
       }
-      
+
       pdf.setFontSize(14);
       pdf.text('Görev Detayları', 14, pdf.previousAutoTable ? pdf.previousAutoTable.finalY + 15 : 110);
-      
+
       // Tablo verileri - En çok 20 kayıt göster
       const rows = data.slice(0, 20).map((task: any) => [
         new Date(task.start_date).toLocaleDateString('tr-TR'),
         // Askeri ve sivil plakayı birlikte göster
-        task.military_plate ? 
-          (task.civilian_plate ? `${task.military_plate}\n${task.civilian_plate}` : task.military_plate) : 
+        task.military_plate ?
+          (task.civilian_plate ? `${task.military_plate}\n${task.civilian_plate}` : task.military_plate) :
           task.civilian_plate || '',
         task.driver_name || '',
         task.task_type,
@@ -477,7 +484,7 @@ export class ReportsComponent implements OnInit {
         task.task_status,
         task.end_date ? new Date(task.end_date).toLocaleDateString('tr-TR') : '-' // Bitiş tarihini ekliyoruz
       ]);
-      
+
       try {
         autoTable(pdf, {
           startY: pdf.previousAutoTable ? pdf.previousAutoTable.finalY + 20 : 115,
@@ -490,31 +497,31 @@ export class ReportsComponent implements OnInit {
             halign: 'center',
             fontStyle: 'bold'
           },
-          styles: { 
-            fontSize: 8, 
+          styles: {
+            fontSize: 8,
             cellPadding: 2
           }
         });
       } catch (err) {
         console.error('Görev tablosu oluşturma hatası:', err);
       }
-      
+
       // Sayfa sayısını kontrol et ve bilgi ekle
       if (data.length > 20) {
         pdf.setFontSize(10);
-        pdf.text(`* Tabloda sadece ilk 20 kayıt gösterilmektedir. Toplam ${data.length} kayıt bulunmaktadır.`, 
+        pdf.text(`* Tabloda sadece ilk 20 kayıt gösterilmektedir. Toplam ${data.length} kayıt bulunmaktadır.`,
           14, (pdf.previousAutoTable?.finalY || 0) + 10);
       }
-      
+
       // Altbilgi ekle
       const pageCount = pdf.getNumberOfPages();
       for (let i = 1; i <= pageCount; i++) {
         pdf.setPage(i);
         pdf.setFontSize(8);
-        pdf.text(`Sayfa ${i} / ${pageCount} - ${new Date().toLocaleDateString('tr-TR')}`, 
+        pdf.text(`Sayfa ${i} / ${pageCount} - ${new Date().toLocaleDateString('tr-TR')}`,
           pdf.internal.pageSize.width - 40, pdf.internal.pageSize.height - 10);
       }
-      
+
       // PDF dosyasını indir
       const filename = `Arac_Gorev_Raporu_${new Date().toLocaleDateString('tr-TR').replace(/\./g, '-')}.pdf`;
       pdf.save(filename);
@@ -533,10 +540,10 @@ export class ReportsComponent implements OnInit {
           format: 'a4',
           putOnlyUsedFonts: true
         });
-        
+
         // Font bağımlılığını azaltmak için mevcut fontları kullanın
         // veya base64 formatında gömülü fontlar kullanabilirsiniz
-        
+
         // ...existing code...
       });
     });
@@ -547,61 +554,61 @@ export class ReportsComponent implements OnInit {
       console.error('Excel için veri bulunamadı');
       return;
     }
-    
+
     // Yeni çalışma kitabı oluştur
     const workbook = new ExcelJS.Workbook();
     workbook.creator = 'Araç Takip Sistemi';
     workbook.created = new Date();
-    
+
     // Özet sayfası oluştur
     const summarySheet = workbook.addWorksheet('Özet');
-    
+
     // Başlık stili
     const titleStyle = {
       font: { bold: true, size: 16 },
       alignment: { horizontal: 'center' as const }  // Type assertion ile düzeltildi
     };
-    
+
     // Başlık satırı ekle
     summarySheet.mergeCells('A1:F1');
     const titleCell = summarySheet.getCell('A1');
     titleCell.value = 'ARAÇ GÖREV RAPORU';
     titleCell.style = titleStyle;
-    
+
     // Tarih aralığı
-    const startDate = this.filterForm.value.startDate ? 
+    const startDate = this.filterForm.value.startDate ?
       new Date(this.filterForm.value.startDate).toLocaleDateString('tr-TR') : 'Başlangıç';
-    const endDate = this.filterForm.value.endDate ? 
+    const endDate = this.filterForm.value.endDate ?
       new Date(this.filterForm.value.endDate).toLocaleDateString('tr-TR') : 'Bugün';
-    
+
     summarySheet.mergeCells('A3:F3');
     summarySheet.getCell('A3').value = `Tarih Aralığı: ${startDate} - ${endDate}`;
-    
+
     // Özet bilgiler
     summarySheet.getCell('A5').value = 'Toplam Görev:';
     summarySheet.getCell('B5').value = this.reportData.totalTasks;
-    
+
     summarySheet.getCell('A6').value = 'Toplam KM:';
     summarySheet.getCell('B6').value = this.reportData.totalKm + ' KM';
-    
+
     summarySheet.getCell('A7').value = 'Toplam Süre:';
     summarySheet.getCell('B7').value = this.reportData.totalHours + ' Saat';
-    
+
     // En iyi sürücüler için başlık
     summarySheet.mergeCells('A9:D9');
     const driversTitle = summarySheet.getCell('A9');
     driversTitle.value = 'EN ÇOK GÖREVE ÇIKAN SÜRÜCÜLER';
     driversTitle.style = { font: { bold: true, size: 12 } };
-    
+
     // Sürücü tablosu başlıkları
     summarySheet.getCell('A10').value = 'Sıra';
     summarySheet.getCell('B10').value = 'Sürücü Adı';
     summarySheet.getCell('C10').value = 'Rütbe';
     summarySheet.getCell('D10').value = 'Görev Sayısı';
-    
+
     // Başlık stilini ayarla
     ['A10', 'B10', 'C10', 'D10'].forEach(cell => {
-      summarySheet.getCell(cell).style = { 
+      summarySheet.getCell(cell).style = {
         font: { bold: true },
         fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: '3F51B5' } },
         alignment: { horizontal: 'center' },
@@ -611,7 +618,7 @@ export class ReportsComponent implements OnInit {
         }
       };
     });
-    
+
     // Sürücü verilerini ekle
     this.reportData.topDrivers.forEach((driver: any, idx: number) => {
       const rowIndex = 11 + idx;
@@ -619,7 +626,7 @@ export class ReportsComponent implements OnInit {
       summarySheet.getCell(`B${rowIndex}`).value = driver.name;
       summarySheet.getCell(`C${rowIndex}`).value = driver.rank || '';
       summarySheet.getCell(`D${rowIndex}`).value = driver.taskCount;
-      
+
       // Hücre çerçevelerini ayarla
       ['A', 'B', 'C', 'D'].forEach(col => {
         summarySheet.getCell(`${col}${rowIndex}`).style = {
@@ -632,38 +639,38 @@ export class ReportsComponent implements OnInit {
         };
       });
     });
-    
+
     // Kolon genişliklerini ayarla
     summarySheet.getColumn('A').width = 10;
     summarySheet.getColumn('B').width = 30;
     summarySheet.getColumn('C').width = 15;
     summarySheet.getColumn('D').width = 15;
-    
+
     // Detay sayfası oluştur
     const detailSheet = workbook.addWorksheet('Görev Detayları');
-    
+
     // Başlık satırı ekle
     detailSheet.mergeCells('A1:K1');
     const detailTitle = detailSheet.getCell('A1');
     detailTitle.value = 'ARAÇ GÖREV DETAYLARI';
     detailTitle.style = titleStyle;
-    
+
     // Detay tablosu başlıkları
     const headers = [
-      'Tarih', 
-      'Plaka', 
+      'Tarih',
+      'Plaka',
       'Sürücü',
-      'Tahsisli Makam', 
-      'Görev Tipi', 
+      'Tahsisli Makam',
+      'Görev Tipi',
       'Güzergah',
-      'Başlangıç KM', 
-      'Bitiş KM', 
-      'Toplam KM', 
-      'Süre (Saat)', 
+      'Başlangıç KM',
+      'Bitiş KM',
+      'Toplam KM',
+      'Süre (Saat)',
       'Durum',
       'Bitiş Tarihi' // Yeni eklenen sütun
     ];
-    
+
     // Başlık stilini ayarla
     headers.forEach((header, idx) => {
       const col = String.fromCharCode(65 + idx); // A, B, C, ... K
@@ -680,28 +687,28 @@ export class ReportsComponent implements OnInit {
         }
       };
     });
-    
+
     // Verileri ekle
     const data = this.tableDataSource.filteredData || [];
-    
+
     data.forEach((task: any, idx: number) => {
       const rowIndex = 4 + idx;
-      
+
       detailSheet.getCell(`A${rowIndex}`).value = new Date(task.start_date).toLocaleDateString('tr-TR');
-      
+
       // Askeri ve sivil plakayı alt alta göster
       if (task.military_plate && task.civilian_plate) {
         detailSheet.getCell(`B${rowIndex}`).value = `${task.military_plate}\n${task.civilian_plate}`;
         // Excel'de alt alta metinler için hücre boyutunu ayarla
         detailSheet.getRow(rowIndex).height = 30;
         detailSheet.getCell(`B${rowIndex}`).alignment = {
-          vertical: 'middle', 
+          vertical: 'middle',
           wrapText: true
         };
       } else {
         detailSheet.getCell(`B${rowIndex}`).value = task.military_plate || task.civilian_plate || '';
       }
-      
+
       detailSheet.getCell(`C${rowIndex}`).value = task.driver_name || '';
       detailSheet.getCell(`D${rowIndex}`).value = task.authority_name || '';
       detailSheet.getCell(`E${rowIndex}`).value = task.task_type;
@@ -713,7 +720,7 @@ export class ReportsComponent implements OnInit {
       detailSheet.getCell(`J${rowIndex}`).value = task.duration_hours ? Number(task.duration_hours).toFixed(1) : '';
       detailSheet.getCell(`K${rowIndex}`).value = task.task_status;
       detailSheet.getCell(`L${rowIndex}`).value = task.end_date ? new Date(task.end_date).toLocaleDateString('tr-TR') : '-'; // Bitiş tarihini ekliyoruz
-      
+
       // Hücre çerçevelerini ayarla
       ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'].forEach(col => {
         detailSheet.getCell(`${col}${rowIndex}`).style = {
@@ -726,7 +733,7 @@ export class ReportsComponent implements OnInit {
         };
       });
     });
-    
+
     // Kolon genişliklerini ayarla
     detailSheet.getColumn('A').width = 15; // Tarih
     detailSheet.getColumn('B').width = 15; // Plaka
@@ -740,7 +747,7 @@ export class ReportsComponent implements OnInit {
     detailSheet.getColumn('J').width = 12; // Süre
     detailSheet.getColumn('K').width = 12; // Durum
     detailSheet.getColumn('L').width = 20; // Bitiş Tarihi
-    
+
     // Excel dosyasını indir
     workbook.xlsx.writeBuffer().then((buffer) => {
       const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
@@ -749,10 +756,135 @@ export class ReportsComponent implements OnInit {
     });
   }
 
+  // KM verilerini Excel olarak indirme fonksiyonu
+  exportKmToExcel() {
+    if (!this.showKmTable || this.kmDataSource.data.length === 0) {
+      this.snackBar.open('Aktarılacak KM verisi bulunamadı', 'Tamam', {
+        duration: 3000,
+        panelClass: ['warning-snackbar']
+      });
+      return;
+    }
+
+    // Yeni çalışma kitabı oluştur
+    const workbook = new ExcelJS.Workbook();
+    workbook.creator = 'Araç Takip Sistemi';
+    workbook.created = new Date();
+
+    // Güncel KM sayfası oluştur
+    const kmSheet = workbook.addWorksheet('Güncel KM Bilgileri');
+
+    // Başlık satırı ekle
+    kmSheet.mergeCells('A1:F1'); // Sütun sayısını arttırdık
+    const titleCell = kmSheet.getCell('A1');
+    titleCell.value = this.selectedKmDate ?
+      `ARAÇ KM BİLGİLERİ (${new Date(this.selectedKmDate).toLocaleDateString('tr-TR')})` :
+      'GÜNCEL ARAÇ KM BİLGİLERİ';
+    titleCell.style = {
+      font: { bold: true, size: 16 },
+      alignment: { horizontal: 'center' }
+    };
+
+    // Tarih bilgisi ekle
+    kmSheet.mergeCells('A2:F2'); // Sütun sayısını arttırdık
+    const dateCell = kmSheet.getCell('A2');
+    dateCell.value = `Oluşturulma Tarihi: ${new Date().toLocaleString('tr-TR')}`;
+    dateCell.style = {
+      font: { italic: true },
+      alignment: { horizontal: 'center' }
+    };
+
+    // Sütun başlıkları
+    const headers = ['S.No', 'Plaka (Askeri)', 'Plaka (Sivil)', 'Marka', 'Model', 'Güncel KM', 'Son Güncelleme']; // Marka ve model eklendi
+    headers.forEach((header, idx) => {
+      const cell = kmSheet.getCell(4, idx + 1);
+      cell.value = header;
+      cell.style = {
+        font: { bold: true },
+        fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: '4F81BD' } },
+        alignment: { horizontal: 'center' },
+        border: {
+          top: { style: 'thin' },
+          left: { style: 'thin' },
+          bottom: { style: 'thin' },
+          right: { style: 'thin' }
+        }
+      };
+    });
+
+    // Verileri ekle
+    this.kmDataSource.data.forEach((vehicle, idx) => {
+      const rowIndex = idx + 5; // Veri satırları 5'ten başlasın
+
+      // Sıra No
+      kmSheet.getCell(`A${rowIndex}`).value = idx + 1;
+
+      // Askeri Plaka
+      kmSheet.getCell(`B${rowIndex}`).value = vehicle.military_plate || '-';
+
+      // Sivil Plaka
+      kmSheet.getCell(`C${rowIndex}`).value = vehicle.civilian_plate || '-';
+
+      // Marka (Yeni)
+      kmSheet.getCell(`D${rowIndex}`).value = vehicle.brand || '-';
+
+      // Model (Yeni)
+      kmSheet.getCell(`E${rowIndex}`).value = vehicle.model || '-';
+
+      // Güncel KM
+      kmSheet.getCell(`F${rowIndex}`).value = vehicle.current_km || '-';
+
+      // Son Güncelleme
+      kmSheet.getCell(`G${rowIndex}`).value = vehicle.last_updated ?
+        new Date(vehicle.last_updated).toLocaleString('tr-TR') : '-';
+
+      // Hücre stillerini ayarla
+      ['A', 'B', 'C', 'D', 'E', 'F', 'G'].forEach(col => { // Yeni sütunlar eklendi
+        const cell = kmSheet.getCell(`${col}${rowIndex}`);
+        cell.style = {
+          alignment: { horizontal: col === 'A' ? 'center' : 'left' },
+          border: {
+            top: { style: 'thin' },
+            left: { style: 'thin' },
+            bottom: { style: 'thin' },
+            right: { style: 'thin' }
+          }
+        };
+      });
+    });
+
+    // Sütun genişliklerini ayarla
+    kmSheet.getColumn('A').width = 8;
+    kmSheet.getColumn('B').width = 20;
+    kmSheet.getColumn('C').width = 20;
+    kmSheet.getColumn('D').width = 15; // Marka
+    kmSheet.getColumn('E').width = 15; // Model
+    kmSheet.getColumn('F').width = 15; // KM
+    kmSheet.getColumn('G').width = 25; // Son güncelleme
+
+    // Excel dosyasını indir
+    workbook.xlsx.writeBuffer().then((buffer) => {
+      const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const filename = `Arac_Guncel_KM_${new Date().toLocaleDateString('tr-TR').replace(/\./g, '-')}.xlsx`;
+      saveAs(blob, filename);
+
+      this.snackBar.open('KM bilgileri Excel dosyası olarak indirildi', 'Tamam', {
+        duration: 3000,
+        panelClass: ['success-snackbar']
+      });
+    }).catch(error => {
+      console.error('Excel indirme hatası:', error);
+      this.snackBar.open('Excel dosyası oluşturulurken hata oluştu', 'Tamam', {
+        duration: 3000,
+        panelClass: ['error-snackbar']
+      });
+    });
+  }
+
   exportLogsToPDF() {
     if (this.logDataSource.data.length === 0) {
       this.snackBar.open('Aktarılacak log kaydı bulunamadı', 'Tamam', {
-        duration: 3000, 
+        duration: 3000,
         panelClass: ['warning-snackbar']
       });
       return;
@@ -767,7 +899,7 @@ export class ReportsComponent implements OnInit {
           italic: 'Helvetica-Oblique',
           bolditalic: 'Helvetica-BoldOblique'
         };
-        
+
         const doc = new jsPDF.default({
           orientation: 'l',
           unit: 'mm',
@@ -775,55 +907,55 @@ export class ReportsComponent implements OnInit {
           putOnlyUsedFonts: true,
           floatPrecision: 16
         });
-        
+
         // PDF Türkçe karakter desteği için ekstra ayarlar
         doc.setFont('Helvetica', 'normal');
         doc.setFontSize(11);
-        
+
         // Türkçe başlık için özel kodlama
         const title = 'Sistem Log Kayitlari';
         doc.text(title, 14, 22);
-        
+
         // Filtreleme bilgileri - Türkçe karakterleri elle kodla
         doc.setFontSize(11);
         doc.setTextColor(100);
-        
+
         let filterInfo = 'islem tipi: ';  // 'İşlem' kelimesinde 'ş' harfi sorun çıkarabilir
         filterInfo += this.selectedActionType === 'all' ? 'Tümü' : this.getActionTypeLabel(this.selectedActionType);
-        
+
         doc.text(filterInfo, 14, 30);
-        
+
         let dateInfo = '';
         if (this.logStartDate) {
           dateInfo += `Baslangıc: ${this.formatDate(this.logStartDate)}`;
         }
-        
+
         if (this.logEndDate) {
           dateInfo += dateInfo ? ` | Bitis: ${this.formatDate(this.logEndDate)}` : `Bitis: ${this.formatDate(this.logEndDate)}`;
         }
-        
+
         if (dateInfo) {
           doc.text(dateInfo, 14, 36);
         }
-        
+
         // Tarih bilgisi
         doc.setFontSize(10);
         doc.text(`Olusturulma: ${new Date().toLocaleString('tr-TR')}`, 14, 42);
-        
+
         // Tablo verileri - Türkçe karakterleri ASCII karşılıklarıyla değiştir
         const tableColumn = ['Tarih', 'Islem', 'Arac', 'Kullanici', 'IP Adresi'];
         const tableRows: any[] = [];
 
         this.logDataSource.data.forEach(log => {
           const logDate = new Date(log.created_at).toLocaleString('tr-TR');
-          const vehicleText = log.vehicle_military_plate ? 
-            `${log.vehicle_military_plate}${log.vehicle_civilian_plate ? ' / ' + log.vehicle_civilian_plate : ''}` : 
+          const vehicleText = log.vehicle_military_plate ?
+            `${log.vehicle_military_plate}${log.vehicle_civilian_plate ? ' / ' + log.vehicle_civilian_plate : ''}` :
             (log.vehicle_civilian_plate || '-');
-            
+
           // Türkçe karakter içerebilen metin değerleri için ASCII karşılıkları
           const actionType = this.turkishToAscii(this.getActionTypeLabel(log.action_type));
           const username = this.turkishToAscii(log.username || '');
-            
+
           tableRows.push([
             logDate,
             actionType,
@@ -871,13 +1003,13 @@ export class ReportsComponent implements OnInit {
 
   private turkishToAscii(text: string): string {
     if (!text) return '';
-    
+
     const replacements: {[key: string]: string} = {
       'ı': 'i', 'İ': 'I', 'ş': 's', 'Ş': 'S',
       'ğ': 'g', 'Ğ': 'G', 'ü': 'u', 'Ü': 'U',
       'ö': 'o', 'Ö': 'O', 'ç': 'c', 'Ç': 'C'
     };
-    
+
     return text.replace(/[ıİşŞğĞüÜöÖçÇ]/g, match => replacements[match] || match);
   }
 
@@ -893,18 +1025,18 @@ export class ReportsComponent implements OnInit {
         const groupedVehicles: {[key: string]: any[]} = {};
         this.allVehicles = [];
         const uniqueTypes = new Set<string>();
-        
+
         this.vehicles.forEach(vehicle => {
           if (vehicle.type) {
             uniqueTypes.add(vehicle.type);
           }
-          
+
           const vehicleType = vehicle.type || 'Diğer';
-          
+
           if (!groupedVehicles[vehicleType]) {
             groupedVehicles[vehicleType] = [];
           }
-          
+
           const vehicleData = {
             id: vehicle.id,
             military_plate: vehicle.military_plate,
@@ -912,11 +1044,11 @@ export class ReportsComponent implements OnInit {
             brand: vehicle.brand,
             model: vehicle.model
           };
-          
+
           groupedVehicles[vehicleType].push(vehicleData);
           this.allVehicles.push(vehicle.id);
         });
-        
+
         this.vehicleTypes = [];
         uniqueTypes.forEach(type => {
           this.vehicleTypes.push({
@@ -924,18 +1056,18 @@ export class ReportsComponent implements OnInit {
             label: this.formatVehicleTypeLabel(type)
           });
         });
-        
+
         if (this.vehicleTypes.length === 0) {
           this.vehicleTypes.push({ value: 'OTHER', label: 'Diğer' });
         }
-        
+
         this.vehicleGroups = Object.keys(groupedVehicles).map(type => ({
           type,
           vehicles: groupedVehicles[type]
         }));
-        
+
         this.filteredVehicleGroups = [...this.vehicleGroups];
-        
+
         console.log('Araç grupları yüklendi:', this.vehicleGroups);
         console.log('Araç tipleri:', this.vehicleTypes);
       },
@@ -973,7 +1105,7 @@ export class ReportsComponent implements OnInit {
 
   loadPersonnel() {
     const apiUrl = 'http://localhost:3000/api/personnel';
-    
+
     this.http.get<Personnel[]>(apiUrl).subscribe({
       next: (data) => {
         this.personnel = data;
@@ -989,7 +1121,7 @@ export class ReportsComponent implements OnInit {
 
   setupTableData(data: any[]) {
     this.tableDataSource = new MatTableDataSource<TaskReportItem>(data);
-    
+
     this.tableDataSource.filterPredicate = (data: any, filter: string) => {
       const dataStr = Object.values(data)
         .filter(val => val !== null && val !== undefined)
@@ -997,7 +1129,7 @@ export class ReportsComponent implements OnInit {
         .toLowerCase();
       return dataStr.includes(filter.toLowerCase());
     };
-    
+
     setTimeout(() => {
       if (this.paginator) {
         this.tableDataSource.paginator = this.paginator;
@@ -1007,23 +1139,23 @@ export class ReportsComponent implements OnInit {
       }
     });
   }
-  
+
   calculateSummaryStats(data: any[]) {
     if (!data || data.length === 0) {
       this.reportData = null;
       return;
     }
-    
+
     const totalKm = data.reduce((sum, task) => {
       const kmValue = task.total_km ? parseFloat(task.total_km) : 0;
       return sum + kmValue;
     }, 0);
-    
+
     const totalHours = data.reduce((sum, task) => {
       const hoursValue = task.duration_hours ? parseFloat(task.duration_hours) : 0;
       return sum + hoursValue;
     }, 0);
-    
+
     const driverStats: {[key: string]: {id: number, name: string, rank?: string, taskCount: number}} = {};
     data.forEach(task => {
       if (task.driver_id && task.driver_name) {
@@ -1036,11 +1168,11 @@ export class ReportsComponent implements OnInit {
         driverStats[task.driver_id].taskCount++;
       }
     });
-    
+
     const topDrivers = Object.values(driverStats)
       .sort((a, b) => b.taskCount - a.taskCount)
       .slice(0, 10);
-    
+
     this.reportData = {
       totalTasks: data.length,
       totalKm: totalKm.toFixed(0),
@@ -1048,34 +1180,34 @@ export class ReportsComponent implements OnInit {
       topDrivers: topDrivers
     };
   }
-  
+
   updateChartData(data: any[]) {
     if (!data || data.length === 0) return;
-    
+
     const taskTypeCounts: {[key: string]: number} = {};
     data.forEach(task => {
       const type = task.task_type || 'Belirtilmemiş';
       taskTypeCounts[type] = (taskTypeCounts[type] || 0) + 1;
     });
-    
+
     const labels = Object.keys(taskTypeCounts);
     const counts = labels.map(label => taskTypeCounts[label]);
-    
+
     this.taskDistributionData.labels = labels;
     this.taskDistributionData.datasets[0].data = counts;
-    
+
     const dateGroups: {[key: string]: number} = {};
     data.forEach(task => {
       const date = new Date(task.start_date).toLocaleDateString('tr-TR');
       dateGroups[date] = (dateGroups[date] || 0) + 1;
     });
-    
+
     const dates = Object.keys(dateGroups);
     const taskCounts = dates.map(date => dateGroups[date]);
-    
+
     this.timelineData.labels = dates;
     this.timelineData.datasets[0].data = taskCounts;
-    
+
     const driverStats: {[key: string]: {id: number, name: string, rank?: string, taskCount: number}} = {};
     data.forEach(task => {
       if (task.driver_id && task.driver_name && task.driver_visibility === 0) {
@@ -1089,17 +1221,17 @@ export class ReportsComponent implements OnInit {
         driverStats[driverKey].taskCount++;
       }
     });
-    
+
     const allDrivers = Object.values(driverStats)
       .sort((a, b) => b.taskCount - a.taskCount);
-      
-    this.driverStatsData.labels = allDrivers.map(driver => 
+
+    this.driverStatsData.labels = allDrivers.map(driver =>
       driver.name + (driver.rank ? ` (${driver.rank})` : '')
     );
     this.driverStatsData.datasets[0].data = allDrivers.map(driver => driver.taskCount);
-    
+
     this.reportData.topDrivers = allDrivers.slice(0, 10);
-    
+
     if (this.chart) {
       this.chart.update();
     }
@@ -1107,14 +1239,14 @@ export class ReportsComponent implements OnInit {
 
   getVehicleTypeLabel(typeValue: string): string {
     if (!typeValue) return 'Diğer';
-    
+
     const type = this.vehicleTypes.find(t => t.value === typeValue);
     return type ? type.label : this.formatVehicleTypeLabel(typeValue);
   }
 
   private formatVehicleTypeLabel(type: string): string {
     if (!type) return 'Diğer';
-    
+
     return type.charAt(0).toUpperCase() + type.slice(1).toLowerCase();
   }
 
@@ -1123,20 +1255,20 @@ export class ReportsComponent implements OnInit {
       this.filteredVehicleGroups = [...this.vehicleGroups];
       return;
     }
-    
+
     searchText = searchText.toLowerCase();
-    
+
     this.filteredVehicleGroups = this.vehicleGroups.map(group => {
       return {
         type: group.type,
-        vehicles: group.vehicles.filter((vehicle: Vehicle) => 
-          vehicle.military_plate.toLowerCase().includes(searchText) || 
+        vehicles: group.vehicles.filter((vehicle: Vehicle) =>
+          vehicle.military_plate.toLowerCase().includes(searchText) ||
           vehicle.civilian_plate.toLowerCase().includes(searchText)
         )
       };
     });
   }
-  
+
   toggleAllVehicles(selectAll: boolean) {
     if (selectAll) {
       this.filterForm.get('vehicles')?.setValue(this.allVehicles);
@@ -1144,17 +1276,17 @@ export class ReportsComponent implements OnInit {
       this.filterForm.get('vehicles')?.setValue([]);
     }
   }
-  
+
   isAllVehiclesSelected(): boolean {
     const selectedVehicles = this.filterForm.get('vehicles')?.value || [];
     return this.allVehicles.length > 0 && selectedVehicles.length === this.allVehicles.length;
   }
-  
+
   isSomeVehiclesSelected(): boolean {
     const selectedVehicles = this.filterForm.get('vehicles')?.value || [];
     return selectedVehicles.length > 0 && selectedVehicles.length < this.allVehicles.length;
   }
-  
+
   getSelectedVehiclesText(): string {
     const selectedVehicles = this.filterForm.get('vehicles')?.value || [];
     if (selectedVehicles.length === this.allVehicles.length) {
@@ -1168,16 +1300,16 @@ export class ReportsComponent implements OnInit {
       this.filteredDrivers = [...this.drivers];
       return;
     }
-    
+
     searchText = searchText.toLowerCase();
-    
-    this.filteredDrivers = this.drivers.filter(driver => 
+
+    this.filteredDrivers = this.drivers.filter(driver =>
       driver.name.toLowerCase().includes(searchText) ||
       (driver.rutbe && driver.rutbe.toLowerCase().includes(searchText)) ||
       (driver.sicil_no && driver.sicil_no.toLowerCase().includes(searchText))
     );
   }
-  
+
   toggleAllDrivers(selectAll: boolean) {
     if (selectAll) {
       this.filterForm.get('drivers')?.setValue([...this.allDrivers]);
@@ -1185,17 +1317,17 @@ export class ReportsComponent implements OnInit {
       this.filterForm.get('drivers')?.setValue([]);
     }
   }
-  
+
   isAllDriversSelected(): boolean {
     const selectedDrivers = this.filterForm.get('drivers')?.value || [];
     return this.allDrivers.length > 0 && selectedDrivers.length === this.allDrivers.length;
   }
-  
+
   isSomeDriversSelected(): boolean {
     const selectedDrivers = this.filterForm.get('drivers')?.value || [];
     return selectedDrivers.length > 0 && selectedDrivers.length < this.allDrivers.length;
   }
-  
+
   getSelectedDriversText(): string {
     const selectedDrivers = this.filterForm.get('drivers')?.value || [];
     if (selectedDrivers.length === this.allDrivers.length) {
@@ -1209,15 +1341,15 @@ export class ReportsComponent implements OnInit {
       this.filteredPersonnel = [...this.personnel];
       return;
     }
-    
+
     searchText = searchText.toLowerCase();
-    
-    this.filteredPersonnel = this.personnel.filter(p => 
+
+    this.filteredPersonnel = this.personnel.filter(p =>
       p.name.toLowerCase().includes(searchText) ||
       (p.rank && p.rank.toLowerCase().includes(searchText))
     );
   }
-  
+
   toggleAllPersonnel(selectAll: boolean) {
     if (selectAll) {
       this.filterForm.get('assignedAuthority')?.setValue([...this.allPersonnel]);
@@ -1225,17 +1357,17 @@ export class ReportsComponent implements OnInit {
       this.filterForm.get('assignedAuthority')?.setValue([]);
     }
   }
-  
+
   isAllPersonnelSelected(): boolean {
     const selectedPersonnel = this.filterForm.get('assignedAuthority')?.value || [];
     return this.allPersonnel.length > 0 && selectedPersonnel.length === this.allPersonnel.length;
   }
-  
+
   isSomePersonnelSelected(): boolean {
     const selectedPersonnel = this.filterForm.get('assignedAuthority')?.value || [];
     return selectedPersonnel.length > 0 && selectedPersonnel.length < this.allPersonnel.length;
   }
-  
+
   getSelectedPersonnelText(): string {
     const selectedPersonnel = this.filterForm.get('assignedAuthority')?.value || [];
     if (selectedPersonnel.length === this.allPersonnel.length) {
@@ -1263,25 +1395,25 @@ export class ReportsComponent implements OnInit {
   searchLogs() {
     // Log filtrelerini oluştur
     const filters: any = {};
-    
+
     if (this.selectedActionType !== 'all') {
       filters.actionType = this.selectedActionType;
     }
-    
+
     if (this.logStartDate) {
       filters.startDate = this.logStartDate;
     }
-    
+
     if (this.logEndDate) {
       filters.endDate = this.logEndDate;
     }
-    
+
     // Logları getir
     this.logService.getAllLogs(filters).subscribe({
       next: (logs) => {
         console.log('Alınan loglar:', logs);
         this.logDataSource.data = logs;
-        
+
         if (this.logDataSource.data.length === 0) {
           this.snackBar.open('Seçilen kriterlere uygun log kaydı bulunamadı', 'Tamam', {
             duration: 3000,
@@ -1320,7 +1452,108 @@ export class ReportsComponent implements OnInit {
       'KADEME_GIRIS': 'Kademe Giriş',
       'KADEME_CIKIS': 'Kademe Çıkış'
     };
-    
+
     return labels[actionType] || actionType;
+  }
+
+  // Güncel KM almak için metot
+  getLatestVehicleKms() {
+    this.showKmTable = true;
+
+    // Loading göster
+    const loadingSnackBarRef = this.snackBar.open('KM bilgileri alınıyor...', '', {
+      duration: undefined
+    });
+
+    // Tarih seçilmemişse bugünü kullan
+    const selectedDate = this.selectedKmDate ? this.selectedKmDate : new Date();
+
+    // Araç KM bilgilerini API'den al
+    this.vehicleService.getVehiclesWithKm(selectedDate).subscribe({
+      next: (vehicles) => {
+        // KM bilgilerini tabloya ekle
+        this.kmDataSource.data = vehicles;
+
+        setTimeout(() => {
+          if (this.kmPaginator) {
+            this.kmDataSource.paginator = this.kmPaginator;
+          }
+          this.kmDataSource.sort = this.sort;
+        });
+
+        loadingSnackBarRef.dismiss();
+        this.snackBar.open('KM bilgileri alındı', 'Tamam', {
+          duration: 3000,
+          panelClass: ['success-snackbar']
+        });
+      },
+      error: (error) => {
+        console.error('Araç KM bilgisi alınamadı:', error);
+        loadingSnackBarRef.dismiss();
+        this.showKmTable = false;
+        this.snackBar.open(
+          'Araç KM bilgileri alınamadı. Lütfen daha sonra tekrar deneyin.',
+          'Tamam', {
+            duration: 5000,
+            panelClass: ['error-snackbar']
+          }
+        );
+      }
+    });
+  }
+
+  // Aracın en son KM bilgisini bulma
+  private findLatestKm(vehicle: any): number | null {
+    if (!vehicle || !vehicle.tasks || vehicle.tasks.length === 0) {
+      return null;
+    }
+
+    // Tarihe göre en son görevleri sırala
+    const sortedTasks = [...vehicle.tasks].sort((a, b) =>
+      new Date(b.end_date || b.start_date).getTime() -
+      new Date(a.end_date || a.start_date).getTime()
+    );
+
+    // En son görevin KM bilgisini döndür
+    const latestTask = sortedTasks[0];
+    return latestTask.end_km || latestTask.start_km || null;
+  }
+
+  // Aracın KM bilgisinin son güncellenme tarihini bulma
+  private findLastUpdateDate(vehicle: any): Date | null {
+    if (!vehicle || !vehicle.tasks || vehicle.tasks.length === 0) {
+      return null;
+    }
+
+    // Tarihe göre en son görevleri sırala
+    const sortedTasks = [...vehicle.tasks].sort((a, b) =>
+      new Date(b.modified_at || b.end_date || b.start_date).getTime() -
+      new Date(a.modified_at || a.end_date || a.start_date).getTime()
+    );
+
+    // En son güncellenme tarihini döndür
+    const latestTask = sortedTasks[0];
+    return new Date(latestTask.modified_at || latestTask.end_date || latestTask.start_date);
+  }
+
+  // KM tablosu için filtre - genişletilmiş
+  applyKmFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.kmDataSource.filterPredicate = (data: any, filter: string) => {
+      const militaryPlate = data.military_plate || '';
+      const civilianPlate = data.civilian_plate || '';
+      const brand = data.brand || '';
+      const model = data.model || '';
+
+      return militaryPlate.toLowerCase().includes(filter.toLowerCase()) ||
+             civilianPlate.toLowerCase().includes(filter.toLowerCase()) ||
+             brand.toLowerCase().includes(filter.toLowerCase()) ||
+             model.toLowerCase().includes(filter.toLowerCase());
+    };
+    this.kmDataSource.filter = filterValue.trim().toLowerCase();
+
+    if (this.kmDataSource.paginator) {
+      this.kmDataSource.paginator.firstPage();
+    }
   }
 }

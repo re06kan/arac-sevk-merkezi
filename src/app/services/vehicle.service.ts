@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -40,6 +40,24 @@ export class VehicleService {
 
   getVehicles(): Observable<any[]> {
     return this.http.get<any[]>(this.apiUrl);
+  }
+
+  getVehiclesWithKm(date?: Date): Observable<any[]> {
+    let url = `${this.apiUrl}/with-km`;
+
+    // Tarih parametresi varsa ekle
+    if (date) {
+      const formattedDate = date.toISOString().split('T')[0]; // YYYY-MM-DD formatına çevir
+      url += `?date=${formattedDate}`;
+    }
+
+    return this.http.get<any[]>(url).pipe(
+      tap(vehicles => console.log('Vehicles with KM fetched:', vehicles.length)),
+      catchError(error => {
+        console.error('Error fetching vehicles with KM:', error);
+        return throwError(() => error);
+      })
+    );
   }
 
   getVehicleById(id: string): Observable<any> {

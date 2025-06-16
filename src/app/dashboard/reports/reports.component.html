@@ -4,7 +4,7 @@
       <mat-icon>analytics</mat-icon>
       Araç Görev Raporları
     </h1>
-    
+
     <!-- Filtreler Kartı -->
     <mat-card class="filters-card">
       <mat-card-content>
@@ -21,26 +21,26 @@
                     {{getSelectedVehiclesText()}}
                   </span>
                 </mat-select-trigger>
-                
+
                 <div class="search-header">
                   <mat-form-field class="search-input" appearance="outline">
                     <mat-label>Ara</mat-label>
                     <input matInput #vehicleSearch (keyup)="filterVehicles(vehicleSearch.value)">
                     <mat-icon matSuffix>search</mat-icon>
                   </mat-form-field>
-                  <mat-checkbox 
-                    #allSelectedVehicles 
-                    class="select-all-checkbox" 
-                    [checked]="isAllVehiclesSelected()" 
+                  <mat-checkbox
+                    #allSelectedVehicles
+                    class="select-all-checkbox"
+                    [checked]="isAllVehiclesSelected()"
                     [indeterminate]="isSomeVehiclesSelected() && !isAllVehiclesSelected()"
                     (change)="toggleAllVehicles($event.checked)"
                     color="primary">
                     Tümünü Seç
                   </mat-checkbox>
                 </div>
-                
+
                 <mat-divider></mat-divider>
-                
+
                 <ng-container *ngFor="let group of filteredVehicleGroups">
                   <mat-optgroup *ngIf="group.vehicles.length > 0" [label]="group.type">
                     <mat-option *ngFor="let vehicle of group.vehicles" [value]="vehicle.id">
@@ -60,7 +60,7 @@
                 </mat-option>
               </mat-select>
             </mat-form-field>
-            
+
             <!-- Sürücü Seçimi -->
             <mat-form-field appearance="outline" class="filter-field">
               <mat-label>Sürücüler</mat-label>
@@ -71,32 +71,32 @@
                     {{getSelectedDriversText()}}
                   </span>
                 </mat-select-trigger>
-                
+
                 <div class="search-header">
                   <mat-form-field class="search-input" appearance="outline">
                     <mat-label>Ara</mat-label>
                     <input matInput #driverSearch (keyup)="filterDrivers(driverSearch.value)">
                     <mat-icon matSuffix>search</mat-icon>
                   </mat-form-field>
-                  <mat-checkbox 
-                    #allSelectedDrivers 
-                    class="select-all-checkbox" 
-                    [checked]="isAllDriversSelected()" 
+                  <mat-checkbox
+                    #allSelectedDrivers
+                    class="select-all-checkbox"
+                    [checked]="isAllDriversSelected()"
                     [indeterminate]="isSomeDriversSelected() && !isAllDriversSelected()"
                     (change)="toggleAllDrivers($event.checked)"
                     color="primary">
                     Tümünü Seç
                   </mat-checkbox>
                 </div>
-                
+
                 <mat-divider></mat-divider>
-                
+
                 <mat-option *ngFor="let driver of filteredDrivers" [value]="driver.id">
                   {{driver.name}} - {{driver.rutbe || 'Rütbe Yok'}}
                 </mat-option>
               </mat-select>
             </mat-form-field>
-            
+
             <!-- Tahsisli Makam Seçimi -->
             <mat-form-field appearance="outline" class="filter-field">
               <mat-label>Tahsisli Makam</mat-label>
@@ -107,32 +107,32 @@
                     {{getSelectedPersonnelText()}}
                   </span>
                 </mat-select-trigger>
-                
+
                 <div class="search-header">
                   <mat-form-field class="search-input" appearance="outline">
                     <mat-label>Ara</mat-label>
                     <input matInput #personnelSearch (keyup)="filterPersonnel(personnelSearch.value)">
                     <mat-icon matSuffix>search</mat-icon>
                   </mat-form-field>
-                  <mat-checkbox 
-                    #allSelectedPersonnel 
-                    class="select-all-checkbox" 
-                    [checked]="isAllPersonnelSelected()" 
+                  <mat-checkbox
+                    #allSelectedPersonnel
+                    class="select-all-checkbox"
+                    [checked]="isAllPersonnelSelected()"
                     [indeterminate]="isSomePersonnelSelected() && !isAllPersonnelSelected()"
                     (change)="toggleAllPersonnel($event.checked)"
                     color="primary">
                     Tümünü Seç
                   </mat-checkbox>
                 </div>
-                
+
                 <mat-divider></mat-divider>
-                
+
                 <mat-option *ngFor="let person of filteredPersonnel" [value]="person.id">
                   {{person.name}} {{person.rank ? '(' + person.rank + ')' : ''}}
                 </mat-option>
               </mat-select>
             </mat-form-field>
-            
+
             <!-- Görev Tipi -->
             <mat-form-field appearance="outline" class="filter-field">
               <mat-label>Görev Tipi</mat-label>
@@ -141,7 +141,7 @@
                   {{taskType}}
                 </mat-option>
               </mat-select>
-            </mat-form-field> 
+            </mat-form-field>
 
             <!-- Tarih Aralığı -->
             <div class="date-range filter-field">
@@ -160,11 +160,11 @@
               </mat-form-field>
             </div>
           </div>
-          
+
           <!-- Butonların yer aldığı alt kısım -->
           <div class="buttons-container">
             <div class="filter-actions">
-              <button mat-raised-button color="primary" (click)="generateReport()" 
+              <button mat-raised-button color="primary" (click)="generateReport()"
                       [disabled]="!filterForm.valid">
                 <mat-icon>search</mat-icon>
                 Rapor Oluştur
@@ -244,7 +244,7 @@
                     [options]="chartOptions">
             </canvas>
           </mat-card>
-          
+
           <!-- Zaman Çizelgesi -->
           <mat-card class="chart-card">
             <canvas baseChart
@@ -253,7 +253,7 @@
                     [options]="timelineOptions">
             </canvas>
           </mat-card>
-          
+
           <!-- YENİ: Sürücü İstatistikleri Grafiği -->
           <mat-card class="chart-card" [style.--driver-count]="driverStatsData.labels?.length || 10">
             <canvas baseChart
@@ -358,7 +358,7 @@
             <ng-container matColumnDef="task_status">
               <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: bold;">Durum</th>
               <td mat-cell *matCellDef="let task">
-                <span [ngClass]="{'text-success': task.task_status === 'KAPALI', 
+                <span [ngClass]="{'text-success': task.task_status === 'KAPALI',
                                  'text-warning': task.task_status === 'ACIK',
                                  'text-info': task.task_status === 'UZUN_YOL',
                                  'text-danger': task.task_status === 'KADEMEDE'}">
@@ -383,7 +383,7 @@
 
             <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-            
+
             <!-- Veri yoksa göster - colspan'i dinamik olarak ayarladık -->
             <tr class="mat-row" *matNoDataRow>
               <td class="mat-cell" [attr.colspan]="displayedColumns.length" style="text-align: center; padding: 16px;">
@@ -397,7 +397,7 @@
             </tr>
           </table>
 
-          <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]" 
+          <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]"
                          [pageSize]="25"
                          showFirstLastButtons>
           </mat-paginator>
@@ -418,10 +418,95 @@
     </div>
   </div>
 
+  <!-- Güncel KM Bölümü -->
+  <div class="current-km-section">
+    <h2>{{selectedKmDate ? (selectedKmDate | date:'dd.MM.yyyy') + ' Tarihindeki KM Bilgileri' : 'Güncel KM Bilgileri'}}</h2>
+
+    <div class="km-actions">
+      <!-- Tarih seçici ekliyoruz -->
+      <mat-form-field appearance="outline" class="km-date-field">
+        <mat-label>Tarih Seçin</mat-label>
+        <input matInput [matDatepicker]="kmDatePicker" [(ngModel)]="selectedKmDate">
+        <mat-datepicker-toggle matSuffix [for]="kmDatePicker"></mat-datepicker-toggle>
+        <mat-datepicker #kmDatePicker></mat-datepicker>
+      </mat-form-field>
+
+      <button mat-raised-button color="primary" (click)="getLatestVehicleKms()">
+        <mat-icon>sync</mat-icon>
+        KM Bilgilerini Al
+      </button>
+
+      <button mat-raised-button color="accent" [disabled]="!showKmTable || kmDataSource.data.length === 0" (click)="exportKmToExcel()">
+        <mat-icon>file_download</mat-icon>
+        Excel'e Aktar
+      </button>
+    </div>
+
+    <!-- Güncel KM Tablosu -->
+    <div class="km-table-container" *ngIf="showKmTable">
+      <mat-form-field appearance="outline" class="km-search-field">
+        <mat-label>Araç Ara</mat-label>
+        <input matInput (keyup)="applyKmFilter($event)" placeholder="Plaka ile ara...">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+
+      <table mat-table [dataSource]="kmDataSource" class="mat-elevation-z8" matSort>
+        <!-- Araç Plakası Sütunu -->
+        <ng-container matColumnDef="plate">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Plaka</th>
+          <td mat-cell *matCellDef="let vehicle">
+            <div class="plate-info">
+              <div class="plate military-plate">{{vehicle.military_plate || '-'}}</div>
+              <div class="plate civilian-plate" *ngIf="vehicle.civilian_plate">{{vehicle.civilian_plate}}</div>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Marka Sütunu -->
+        <ng-container matColumnDef="brand">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Marka</th>
+          <td mat-cell *matCellDef="let vehicle">{{vehicle.brand || '-'}}</td>
+        </ng-container>
+
+        <!-- Model Sütunu -->
+        <ng-container matColumnDef="model">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Model</th>
+          <td mat-cell *matCellDef="let vehicle">{{vehicle.model || '-'}}</td>
+        </ng-container>
+
+        <!-- Güncel KM Sütunu -->
+        <ng-container matColumnDef="current_km">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Güncel KM</th>
+          <td mat-cell *matCellDef="let vehicle">{{vehicle.current_km || '-'}}</td>
+        </ng-container>
+
+        <!-- Son Güncelleme Sütunu -->
+        <ng-container matColumnDef="last_updated">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Son Güncelleme</th>
+          <td mat-cell *matCellDef="let vehicle">
+            {{vehicle.last_updated ? (vehicle.last_updated | date:'dd.MM.yyyy HH:mm') : '-'}}
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="kmColumns; sticky: true"></tr>
+        <tr mat-row *matRowDef="let row; columns: kmColumns;"></tr>
+
+        <!-- Veri yoksa göster -->
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell" [attr.colspan]="kmColumns.length" style="text-align: center; padding: 16px;">
+            Araç KM bilgisi bulunamadı
+          </td>
+        </tr>
+      </table>
+
+      <mat-paginator #kmPaginator [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons></mat-paginator>
+    </div>
+  </div>
+
   <!-- Sistem Logları Bölümü -->
   <div class="logs-section">
     <h2>Sistem Logları</h2>
-    
+
     <div class="log-filters">
       <mat-form-field appearance="outline">
         <mat-label>İşlem Tipi</mat-label>
@@ -456,7 +541,7 @@
     </div>
 
     <div class="log-table-container">
-      <!-- Sistem log tablosu başlıyor --> 
+      <!-- Sistem log tablosu başlıyor -->
       <table mat-table [dataSource]="logDataSource" class="mat-elevation-z8" matSort>
         <!-- Tarih Sütunu -->
         <ng-container matColumnDef="created_at">
@@ -512,9 +597,9 @@
         <tr mat-row *matRowDef="let row; columns: logColumns;"></tr>
       </table>
     </div>
-    
+
     <mat-paginator #logPaginator [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons></mat-paginator>
-    
+
     <!-- Log export işlemleri - Excel butonu kaldırıldı -->
     <div class="export-actions" *ngIf="logDataSource.data.length > 0">
       <button mat-raised-button color="primary" (click)="exportLogsToPDF()">
