@@ -733,6 +733,25 @@ pool.connect((err, client, release) => {
 // Statik dosyaları servis et - API rotalarından SONRA
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Add custom styles for success messages
+app.get('/api/styles.css', (req, res) => {
+  res.setHeader('Content-Type', 'text/css');
+  res.send(`
+    .success-snackbar {
+      background-color: #4caf50 !important; /* Green background */
+      color: white !important;
+    }
+
+    .mat-mdc-snack-bar-container.success-snackbar .mdc-snackbar__surface {
+      background-color: #4caf50 !important;
+    }
+
+    .mat-mdc-snack-bar-container.success-snackbar .mat-mdc-snack-bar-action {
+      color: white !important;
+    }
+  `);
+});
+
 // SPA için tüm diğer istekleri index.html'e yönlendir - EN SONDA olmalı
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));

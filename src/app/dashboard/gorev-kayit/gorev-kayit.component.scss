@@ -3,7 +3,7 @@
 .gorev-kayit-container {
   padding: 20px 50px 20px 10px; // Sağdan ve soldan boşluk ayarlandı
   width: calc(100% - 80px); // Tüm sayfalarda standart genişlik
-  margin: 0 auto; 
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -49,7 +49,7 @@
           background-color: #f8fafc;
           border-radius: 8px;
           border-left: 4px solid #1976d2;
-          
+
           strong {
             color: #1976d2;
             margin-right: 0.75rem;
@@ -88,7 +88,7 @@
 
       mat-form-field {
         width: 100%;
-        
+
         &.mat-form-field-appearance-outline {
           .mat-form-field-wrapper {
             margin: 0;
@@ -190,7 +190,7 @@
       padding: 0.5rem;
       background-color: #f8f9fa;
       border-radius: 4px;
-      
+
       strong {
         color: #1976d2;
         margin-right: 0.5rem;
@@ -206,7 +206,7 @@
   border-radius: 8px;
   margin: 2rem auto;
   max-width: 500px;
-  
+
   mat-icon {
     color: #f44336;
     font-size: 48px;
@@ -245,7 +245,7 @@
   .mat-mdc-option {
     text-align: center !important;
     justify-content: center !important;
-    
+
     .mdc-list-item__primary-text {
       flex: none !important;
     }
@@ -260,7 +260,7 @@
   .mat-mdc-input-element {
     padding-left: 15px !important;
   }
-  
+
   textarea.mat-mdc-input-element {
     padding-left: 15px !important;
   }
@@ -410,16 +410,16 @@
       &.kapali { background: #e0e0e0; color: #333; }
       &.acik { background: #4caf50; color: white; }
       &.kademede { background: #ff9800; color: white; }
-      &.uzun_yol { 
-        background: #e1f5fe; 
+      &.uzun_yol {
+        background: #e1f5fe;
         color: #0277bd;
       }
-      &.uzun-yol { 
+      &.uzun-yol {
         background: #1976d2;
         color: white;
       }
       &.uzun-yol-closed {
-        background: #e3f2fd; 
+        background: #e3f2fd;
         color: #1976d2;
         border: 1px solid #1976d2;
       }
@@ -435,11 +435,11 @@
     .row-uzun-yol {
       background-color: rgba(25, 118, 210, 0.04); // Mavi tonu
       transition: background-color 0.3s;
-      
+
       &:hover {
         background-color: rgba(25, 118, 210, 0.08);
       }
-      
+
       td {
         border-left: 4px solid #1976d2;
       }
@@ -448,11 +448,11 @@
     .row-acik {
       background-color: rgba(244, 67, 54, 0.04); // Kırmızı tonu
       transition: background-color 0.3s;
-      
+
       &:hover {
         background-color: rgba(244, 67, 54, 0.08);
       }
-      
+
       td {
         border-left: 4px solid #f44336;
       }
@@ -461,11 +461,11 @@
     .row-kapali {
       background-color: rgba(76, 175, 80, 0.04); // Yeşil tonu
       transition: background-color 0.3s;
-      
+
       &:hover {
         background-color: rgba(76, 175, 80, 0.08);
       }
-      
+
       td {
         border-left: 4px solid #4caf50;
       }
@@ -474,11 +474,11 @@
     .row-kademede {
       background-color: rgba(255, 152, 0, 0.04); // Turuncu tonu
       transition: background-color 0.3s;
-      
+
       &:hover {
         background-color: rgba(255, 152, 0, 0.08);
       }
-      
+
       td {
         border-left: 4px solid #ff9800;
       }
@@ -510,7 +510,7 @@
 
 .task-history {
   margin-top: 2rem;
-  
+
   h3 {
     color: #2c3e50;
     font-size: 1.5rem;
@@ -534,7 +534,7 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
       border-bottom: 2px solid #e0e0e0;
-      
+
       // Başlık gölgesi ekle
       position: relative;
       &::after {
@@ -573,28 +573,28 @@
       display: inline-block;
       min-width: 90px;
 
-      &.kapali { 
-        background: #e8f5e9; 
+      &.kapali {
+        background: #e8f5e9;
         color: #2e7d32;
       }
-      &.acik { 
-        background: #ffebee; 
+      &.acik {
+        background: #ffebee;
         color: #c62828;
       }
-      &.kademede { 
-        background: #fff3e0; 
+      &.kademede {
+        background: #fff3e0;
         color: #ef6c00;
       }
-      &.uzun_yol { 
-        background: #e1f5fe; 
+      &.uzun_yol {
+        background: #e1f5fe;
         color: #0277bd;
       }
-      &.uzun-yol { 
+      &.uzun-yol {
         background: #1976d2;
         color: white;
       }
       &.uzun-yol-closed {
-        background: #e3f2fd; 
+        background: #e3f2fd;
         color: #1976d2;
         border: 1px solid #1976d2;
       }
@@ -629,7 +629,7 @@
 }
 
 // Column-specific styles
-.mat-column-created_at, 
+.mat-column-created_at,
 .mat-column-end_date {
   width: 160px;
   white-space: nowrap;
@@ -661,7 +661,7 @@
     color: #1976d2;
     font-style: italic;
   }
-  
+
   // Kademe detay butonu için stil
   .details-button {
     position: absolute;
@@ -672,7 +672,7 @@
     line-height: 24px;
     background-color: white;
     border: 1px solid #ff9800;
-    
+
     .mat-icon {
       font-size: 16px;
       width: 16px;
@@ -680,10 +680,10 @@
       line-height: 16px;
       color: #ff9800;
     }
-    
+
     &:hover {
       background-color: #ff9800;
-      
+
       .mat-icon {
         color: white;
       }
@@ -695,13 +695,13 @@
 .maintenance-column {
   text-align: center;
   width: 80px;
-  
+
   .maintenance-button {
     width: 36px;
     height: 36px;
     line-height: 36px;
     background-color: #ff9800;
-    
+
     .mat-icon {
       font-size: 18px;
       width: 18px;
@@ -709,14 +709,14 @@
       line-height: 18px;
       color: white;
     }
-    
+
     &:hover {
       background-color: color.adjust(#ff9800, $lightness: -10%); // darken yerine color.adjust kullandık
       transform: scale(1.1);
       transition: all 0.2s ease;
     }
   }
-  
+
   .no-maintenance {
     color: #aaa;
     font-style: italic;

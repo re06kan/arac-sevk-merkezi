@@ -111,13 +111,13 @@ export class GorevKayitComponent implements OnInit, OnDestroy {
     this.gorevForm = this.fb.group({
       aracPlakasi: [{value: '', disabled: true}],
       surucu: [{value: '', disabled: false}, Validators.required],
-      tahsisliMakam: [{value: '', disabled: false}, Validators.required],
-      emirVeren: [{value: '', disabled: false}, Validators.required],
+      tahsisliMakam: [{value: '', disabled: false}],
+      emirVeren: [{value: '', disabled: false}],
       donusMesaji: [{value: '', disabled: false}, [Validators.maxLength(200)]],
       cikisKm: [{value: '', disabled: false}, [Validators.required, Validators.min(0)]],
       gelisKm: [{value: '', disabled: false}, [Validators.min(0)]],
       gorevKagitNo: [{value: '', disabled: false}, [
-        Validators.required, 
+        Validators.required,
         Validators.maxLength(15)
       ]],
       gidilenGuzergah: [{value: '', disabled: false}, [Validators.required, Validators.maxLength(25)]],
@@ -170,7 +170,7 @@ export class GorevKayitComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
-    
+
     if (this.wheelHandler) {
       document.removeEventListener('wheel', this.wheelHandler);
     }
@@ -180,8 +180,8 @@ export class GorevKayitComponent implements OnInit, OnDestroy {
     this.gorevForm = this.fb.group({
       aracPlakasi: [{value: '', disabled: true}],
       surucu: ['', Validators.required],
-      tahsisliMakam: ['', Validators.required],
-      emirVeren: ['', Validators.required],
+      tahsisliMakam: [''],
+      emirVeren: [''],
       donusMesaji: [''],
       cikisKm: ['', [Validators.required, Validators.min(0)]],
       gelisKm: ['', [Validators.min(0)]],
@@ -257,14 +257,14 @@ export class GorevKayitComponent implements OnInit, OnDestroy {
       this.gorevForm.get('gorevKagitNo')?.disable();
       this.gorevForm.get('gidilenGuzergah')?.disable();
       this.gorevForm.get('baslangicTarihi')?.disable();
-      
+
       this.driverSearchControl.disable();
       this.personnelSearchControl.disable();
     } else {
       this.gorevForm.enable();
       this.driverSearchControl.enable();
       this.personnelSearchControl.enable();
-      
+
       this.gorevForm.get('aracPlakasi')?.disable();
       this.gorevForm.get('baslangicTarihi')?.disable();
       this.gorevForm.get('gorevDurumu')?.disable();
@@ -277,7 +277,7 @@ export class GorevKayitComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     document.addEventListener('wheel', this.wheelHandler, { passive: true });
-    
+
     this.vehicleId = this.route.snapshot.paramMap.get('id');
     if (this.vehicleId) {
       this.loadVehicleDetails(this.vehicleId);
@@ -291,8 +291,8 @@ export class GorevKayitComponent implements OnInit, OnDestroy {
         next: async (tasks: Task[]) => {
           console.log('Yüklenen tüm görevler:', tasks);
           this.taskHistory = tasks;
-          
-          this.activeTask = tasks.find((task: Task) => 
+
+          this.activeTask = tasks.find((task: Task) =>
             [GorevDurumu.ACIK, GorevDurumu.KADEMEDE, GorevDurumu.UZUN_YOL].includes(task.task_status as GorevDurumu)
           ) || null;
 
@@ -353,7 +353,7 @@ export class GorevKayitComponent implements OnInit, OnDestroy {
             });
             this.gorevForm.get('cikisKm')?.disable();
           }
-          
+
           console.log('Görev geçmişi yüklendi:', tasks);
           console.log('Aktif görev:', this.activeTask);
         },
@@ -380,17 +380,17 @@ export class GorevKayitComponent implements OnInit, OnDestroy {
           return;
         }
         console.log('Gelen araç detayları:', data);
-        
+
         this.vehicle = {
           ...data,
           militaryPlate: data.military_plate,
           civilianPlate: data.civilian_plate
         };
-        
+
         this.gorevForm.patchValue({
           aracPlakasi: data.military_plate
         });
-        
+
         this.hasError = false;
       },
       error: (error) => {
@@ -462,7 +462,7 @@ export class GorevKayitComponent implements OnInit, OnDestroy {
   gorevAc() {
     if (this.gorevForm.valid) {
       this.gorevForm.get('gelisKm')?.disable();
-      
+
       const formData = this.gorevForm.getRawValue();
       const now = new Date();
 
@@ -512,7 +512,7 @@ export class GorevKayitComponent implements OnInit, OnDestroy {
             error: (error) => {
               console.error('Görev başlatma hatası:', error);
               const errorMessage = error.error?.error || 'Görev başlatılırken hata oluştu';
-              
+
               this.snackBar.open(errorMessage, 'Kapat', {
                 duration: 5000,
                 panelClass: ['error-snackbar']
@@ -538,7 +538,7 @@ export class GorevKayitComponent implements OnInit, OnDestroy {
         .join(', ');
 
       console.log('Eksik/hatalı alanlar:', invalidFields);
-      
+
       this.snackBar.open(`Lütfen zorunlu alanları doldurun: ${invalidFields}`, 'Kapat', {
         duration: 3000,
         panelClass: ['warning-snackbar']
@@ -554,13 +554,13 @@ export class GorevKayitComponent implements OnInit, OnDestroy {
       });
       return;
     }
-  
+
     this.gorevForm.get('gelisKm')?.enable();
-  
+
     const gelisKm = this.gorevForm.get('gelisKm')?.value;
     const cikisKm = this.gorevForm.get('cikisKm')?.value;
     const donusMesaji = this.gorevForm.get('donusMesaji')?.value || '';
-  
+
     if (!gelisKm) {
       this.snackBar.open('Lütfen geliş KM bilgisini giriniz', 'Kapat', {
         duration: 3000,
@@ -568,7 +568,7 @@ export class GorevKayitComponent implements OnInit, OnDestroy {
       });
       return;
     }
-  
+
     if (gelisKm <= cikisKm) {
       this.snackBar.open('Geliş KM, çıkış KM\'den büyük olmalıdır', 'Kapat', {
         duration: 3000,
@@ -576,7 +576,7 @@ export class GorevKayitComponent implements OnInit, OnDestroy {
       });
       return;
     }
-  
+
     this.taskService.endTask(this.activeTask.id, {
       end_km: gelisKm,
       return_message: donusMesaji
@@ -597,7 +597,7 @@ export class GorevKayitComponent implements OnInit, OnDestroy {
         this.gorevDurumu = 'KAPALI';
         this.activeTask = null;
         this.loadTaskHistory();
-  
+
         setTimeout(() => {
           this.router.navigate(['/dashboard']);
         }, 2000);
@@ -619,13 +619,13 @@ export class GorevKayitComponent implements OnInit, OnDestroy {
   kademeGiris() {
     if (this.taskHistory.length === 0) {
       this.snackBar.open(
-        'Bu araç için henüz hiç görev kaydı bulunmamaktadır. KM bilgisi olmadığından kademe girişi yapılamaz.', 
-        'Kapat', 
+        'Bu araç için henüz hiç görev kaydı bulunmamaktadır. KM bilgisi olmadığından kademe girişi yapılamaz.',
+        'Kapat',
         { duration: 5000, panelClass: ['error-snackbar'] }
       );
       return;
     }
-    
+
     if (this.drivers.length === 0) {
       this.snackBar.open('Kayıtlı sürücü bulunamadı. Lütfen önce bir sürücü kaydı yapın.', 'Kapat', {
         duration: 3000,
@@ -633,10 +633,10 @@ export class GorevKayitComponent implements OnInit, OnDestroy {
       });
       return;
     }
-    
+
     const lastTask = this.taskHistory.find(t => t.task_status === 'KAPALI');
     const startKm = lastTask?.end_km || 0;
-    
+
     const defaultDriver = this.drivers.find(d => d.visibility === 0) || this.drivers[0];
     if (!defaultDriver) {
       this.snackBar.open('Geçerli bir sürücü bulunamadı!', 'Kapat', {
@@ -645,7 +645,7 @@ export class GorevKayitComponent implements OnInit, OnDestroy {
       });
       return;
     }
-    
+
     const defaultAuthority = this.personnel.find(p => p.visibility === 0) || this.personnel[0];
     if (!defaultAuthority) {
       this.snackBar.open('Geçerli bir yetkili personel bulunamadı!', 'Kapat', {
@@ -654,7 +654,7 @@ export class GorevKayitComponent implements OnInit, OnDestroy {
       });
       return;
     }
-    
+
     const dialogRef = this.dialog.open(KademeGirisModalComponent, {
       width: '1200px',
       maxWidth: '95vw',
@@ -671,11 +671,11 @@ export class GorevKayitComponent implements OnInit, OnDestroy {
         teknisyenler: []
       }
     });
-  
+
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         console.log('Kademe kayıt verileri:', result);
-        
+
         if (!this.activeTask) {
           const taskData = {
             vehicle_id: Number(this.vehicleId),
@@ -688,9 +688,9 @@ export class GorevKayitComponent implements OnInit, OnDestroy {
             return_message: result.notlar || null,
             task_status: 1
           };
-          
+
           console.log('Oluşturulacak görev verileri:', taskData);
-          
+
           this.taskService.createTask(taskData).subscribe({
             next: (response) => {
               this.activeTask = response;
@@ -721,10 +721,10 @@ export class GorevKayitComponent implements OnInit, OnDestroy {
       }
     });
   }
-  
+
   private kademeKaydet(taskId: number, formData: any) {
     console.log('Kademe kaydı için gönderilen veri:', {taskId, formData});
-    
+
     this.taskService.startMaintenance(taskId, formData).subscribe({
       next: (response) => {
         console.log('Kademe kaydı yanıtı:', response);
@@ -741,9 +741,9 @@ export class GorevKayitComponent implements OnInit, OnDestroy {
             duration: 3000,
             panelClass: ['success-snackbar']
           });
-          this.gorevDurumu = 'KADEMEDE'; 
+          this.gorevDurumu = 'KADEMEDE';
           this.loadTaskHistory();
-          
+
           this.updateFormControlsState();
         } else {
           this.snackBar.open('Kademe kaydı oluşturuldu ancak durum güncellenemedi', 'Kapat', {
@@ -755,7 +755,7 @@ export class GorevKayitComponent implements OnInit, OnDestroy {
       error: (error) => {
         console.error('Kademe kaydı hatası:', error);
         this.snackBar.open(
-          'Kademe kaydı oluşturulurken hata: ' + 
+          'Kademe kaydı oluşturulurken hata: ' +
           (error.error?.message || error.error?.error || error.message || 'Bilinmeyen hata'),
           'Kapat',
           {
@@ -770,7 +770,7 @@ export class GorevKayitComponent implements OnInit, OnDestroy {
   kademeCikis() {
     console.log('Kademe çıkış butonuna basıldı');
     console.log('Aktif görev:', this.activeTask);
-    
+
     if (!this.activeTask?.id || !this.activeTask?.maintenance_id) {
       this.snackBar.open('Bu araç için aktif kademe kaydı bulunamadı', 'Kapat', {
         duration: 3000,
@@ -778,7 +778,7 @@ export class GorevKayitComponent implements OnInit, OnDestroy {
       });
       return;
     }
-  
+
     const dialogRef = this.dialog.open(KademeCikisModalComponent, {
       width: '900px',
       maxWidth: '95vw',
@@ -789,12 +789,12 @@ export class GorevKayitComponent implements OnInit, OnDestroy {
         activeTask: this.activeTask
       }
     });
-  
+
     dialogRef.afterClosed().subscribe(result => {
       console.log('Dialog sonucu:', result);
       if (result && this.activeTask?.id) {
         const maintenanceId = this.activeTask.maintenance_id || 0;
-        
+
         this.taskService.endMaintenance(this.activeTask.id, maintenanceId, result).subscribe({
           next: (response) => {
             this.createTaskLog({
@@ -809,10 +809,10 @@ export class GorevKayitComponent implements OnInit, OnDestroy {
               duration: 3000,
               panelClass: ['success-snackbar']
             });
-            this.gorevDurumu = 'KAPALI'; 
+            this.gorevDurumu = 'KAPALI';
             this.activeTask = null;
             this.loadTaskHistory();
-            
+
             this.updateFormControlsState();
           },
           error: (error) => {
@@ -830,19 +830,19 @@ export class GorevKayitComponent implements OnInit, OnDestroy {
   uzunYol() {
     if (this.gorevForm.valid) {
       this.gorevForm.get('gelisKm')?.disable();
-      
+
       if (!this.gorevForm.valid) {
         const invalidFields = Object.keys(this.gorevForm.controls)
           .filter(key => this.gorevForm.get(key)?.invalid)
           .join(', ');
-  
+
         this.snackBar.open(`Lütfen zorunlu alanları doldurun: ${invalidFields}`, 'Kapat', {
           duration: 3000,
           panelClass: ['warning-snackbar']
         });
         return;
       }
-    
+
       const formData = this.gorevForm.getRawValue();
       const taskData = {
         vehicle_id: Number(this.vehicleId),
@@ -854,7 +854,7 @@ export class GorevKayitComponent implements OnInit, OnDestroy {
         route_description: formData.gidilenGuzergah,
         task_status: 3
       };
-    
+
       this.taskService.createTask(taskData).subscribe({
         next: (response) => {
           this.createTaskLog({
@@ -873,19 +873,19 @@ export class GorevKayitComponent implements OnInit, OnDestroy {
                 duration: 3000,
                 panelClass: ['success-snackbar']
               });
-              
+
               this.gorevDurumu = 'UZUN_YOL';
               this.activeTask = startedTask;
-  
+
               this.loadTaskHistory();
-              
+
               setTimeout(() => {
                 this.router.navigate(['/dashboard']);
               }, 2000);
             },
             error: (error) => {
               this.loadTaskHistory();
-              
+
               this.snackBar.open('Uzun yol görevi oluşturuldu fakat başlatılamadı. Sayfa yenileniyor...', 'Kapat', {
                 duration: 3000,
                 panelClass: ['warning-snackbar']
@@ -911,7 +911,7 @@ export class GorevKayitComponent implements OnInit, OnDestroy {
   onSubmit() {
     if (this.gorevForm.valid && this.vehicleId) {
       const formData = this.gorevForm.getRawValue();
-      
+
       const taskData = {
         vehicle_id: Number(this.vehicleId),
         driver_id: formData.surucu,
@@ -954,7 +954,7 @@ export class GorevKayitComponent implements OnInit, OnDestroy {
         error: (error) => {
           console.error('Görev kaydetme hatası:', error);
           const errorMessage = error.error?.message || error.error?.details || error.error?.error || error.message;
-          
+
           this.snackBar.open(
             'Görev kaydedilirken bir hata oluştu: ' + errorMessage,
             'Kapat',
@@ -986,7 +986,7 @@ export class GorevKayitComponent implements OnInit, OnDestroy {
       verticalPosition: 'top',
       panelClass: ['error-snackbar']
     });
-    
+
     requestAnimationFrame(() => {
       setTimeout(() => {
         this.router.navigate(['/dashboard']);
@@ -1039,16 +1039,16 @@ export class GorevKayitComponent implements OnInit, OnDestroy {
     const start = new Date(startDate);
     const end = new Date(endDate);
     const diff = end.getTime() - start.getTime();
-    
+
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
     const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    
+
     let duration = '';
     if (days > 0) duration += `${days} gün `;
     if (hours > 0) duration += `${hours} saat `;
     if (minutes > 0) duration += `${minutes} dakika`;
-    
+
     return duration.trim() || '1 dakikadan az';
   }
 
@@ -1057,7 +1057,7 @@ export class GorevKayitComponent implements OnInit, OnDestroy {
   }
 
   isUzunYolClosed(task: Task): boolean {
-    return task.task_status === GorevDurumu.KAPALI && 
+    return task.task_status === GorevDurumu.KAPALI &&
            task.task_type === 'UZUN_YOL';
   }
 
@@ -1082,12 +1082,12 @@ export class GorevKayitComponent implements OnInit, OnDestroy {
       });
       return;
     }
-  
+
     event?.stopPropagation();
     event?.preventDefault();
-  
+
     console.log('Bakım detayları görüntüleniyor, taskId:', task.id, 'maintenanceId:', task.maintenance_id);
-    
+
     this.taskService.getMaintenanceDetails(task.id, task.maintenance_id).subscribe({
       next: (maintenance) => {
         this.dialog.open(MaintenanceDetailsModalComponent, {
@@ -1113,7 +1113,7 @@ export class GorevKayitComponent implements OnInit, OnDestroy {
         });
       }
     });
-  
+
     return false;
   }
 
@@ -1121,7 +1121,7 @@ export class GorevKayitComponent implements OnInit, OnDestroy {
     if (this.gorevDurumu === GorevDurumu.KADEMEDE) {
       return false;
     }
-    
+
     if (this.gorevDurumu === GorevDurumu.ACIK) {
       return false;
     }
@@ -1132,30 +1132,30 @@ export class GorevKayitComponent implements OnInit, OnDestroy {
   // Add method to check if vehicle is currently available (not on any task)
   isVehicleAvailable(): boolean {
     // Check if there's an active task for this vehicle
-    const activeTaskExists = this.taskHistory.some(task => 
-      task.task_status === 'ACIK' || 
-      task.task_status === 'KADEMEDE' || 
+    const activeTaskExists = this.taskHistory.some(task =>
+      task.task_status === 'ACIK' ||
+      task.task_status === 'KADEMEDE' ||
       task.task_status === 'UZUN_YOL'
     );
-    
+
     return !activeTaskExists;
   }
 
   // Add method to check if a task is the last closed task
   isLastClosedTask(task: Task): boolean {
     if (task.task_status !== 'KAPALI') return false;
-    
+
     // Get all closed tasks
     const closedTasks = this.taskHistory.filter(t => t.task_status === 'KAPALI');
     if (closedTasks.length === 0) return false;
-    
+
     // Sort by end_date or created_at descending to get the most recent one
     const sortedByDate = [...closedTasks].sort((a, b) => {
       const dateA = new Date(a.end_date || a.created_at);
       const dateB = new Date(b.end_date || b.created_at);
       return dateB.getTime() - dateA.getTime();
     });
-    
+
     // Return true if this task is the most recent closed task
     return sortedByDate[0].id === task.id;
   }
@@ -1169,7 +1169,7 @@ export class GorevKayitComponent implements OnInit, OnDestroy {
       });
       return;
     }
-    
+
     if (task.task_status !== 'KAPALI') {
       this.snackBar.open('Sadece kapalı görevlerde KM güncellemesi yapılabilir', 'Tamam', {
         duration: 3000,
@@ -1177,7 +1177,7 @@ export class GorevKayitComponent implements OnInit, OnDestroy {
       });
       return;
     }
-    
+
     if (!this.isVehicleAvailable()) {
       this.snackBar.open('Araç şu anda aktif bir görevde olduğu için KM güncellemesi yapılamaz', 'Tamam', {
         duration: 3000,
@@ -1185,15 +1185,14 @@ export class GorevKayitComponent implements OnInit, OnDestroy {
       });
       return;
     }
-    
-    if (!this.isLastClosedTask(task)) {
-      this.snackBar.open('Sadece en son kapatılan görevde KM güncellemesi yapılabilir', 'Tamam', {
+    if (!task.end_km) {
+      this.snackBar.open('Bu görev için KM bilgisi bulunmamaktadır', 'Tamam', {
         duration: 3000,
         panelClass: ['warning-snackbar']
       });
       return;
     }
-    
+
     const dialogRef = this.dialog.open(KmEditModalComponent, {
       width: '500px',
       data: {
@@ -1205,7 +1204,7 @@ export class GorevKayitComponent implements OnInit, OnDestroy {
       autoFocus: true,
       restoreFocus: true
     });
-    
+
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.updateTaskKm(result.taskId, result.endKm, result.reason);
@@ -1220,7 +1219,7 @@ export class GorevKayitComponent implements OnInit, OnDestroy {
           duration: 2000,
           panelClass: ['success-snackbar']
         });
-        
+
         // Create log for the update with correct property names
         this.createTaskLog({
           taskId: taskId,
@@ -1231,14 +1230,14 @@ export class GorevKayitComponent implements OnInit, OnDestroy {
             updatedBy: this.authService.getCurrentUser()?.username
           }
         });
-        
+
         // Refresh task history
         this.loadTaskHistory();
       },
       error: (error) => {
         console.error('KM güncelleme hatası:', error);
         this.snackBar.open(
-          'KM bilgisi güncellenirken bir hata oluştu: ' + 
+          'KM bilgisi güncellenirken bir hata oluştu: ' +
           (error.error?.message || error.message || 'Bilinmeyen hata'),
           'Tamam',
           {
@@ -1246,6 +1245,60 @@ export class GorevKayitComponent implements OnInit, OnDestroy {
             panelClass: ['error-snackbar']
           }
         );
+      }
+    });
+  }
+
+  // editKm metodunu güncelle - mevcut endpoint ile çalışacak şekilde
+  editKm(task: Task): void {
+    if (!this.isAdmin) {
+      this.snackBar.open('Bu işlem için yönetici yetkisi gerekiyor', 'Tamam', {
+        duration: 3000
+      });
+      return;
+    }
+
+    const dialogRef = this.dialog.open(KmEditModalComponent, {
+      width: '500px',
+      data: {
+        task: task,
+        vehicle: this.vehicle
+      }
+    });
+
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result) {
+        // Doğru endpoint'i kullanarak hata olmamasını sağlayalım
+        this.taskService.updateTaskKm(result.taskId, result.startKm, result.endKm, result.reason).subscribe({
+          next: () => {
+            // Log kaydı eklendi
+            this.createTaskLog({
+              taskId: result.taskId,
+              actionType: 'KM_GUNCELLEME',
+              actionDetails: {
+                km: result.endKm,
+                newEndKm: result.startKm, // İzin verilen bir alan kullanıldı
+                reason: result.reason,
+                updatedBy: this.authService.getCurrentUser()?.username
+              }
+            });
+
+            this.snackBar.open('KM bilgisi başarıyla güncellendi', 'Tamam', {
+              duration: 2000,
+              panelClass: ['success-snackbar']  // Yeşil arka plan ve beyaz yazı için
+            });
+            this.loadTaskHistory();
+          },
+          error: (err: any) => {
+            console.error('KM güncelleme hatası:', err);
+            this.snackBar.open(
+              'KM bilgisi güncellenirken hata oluştu: ' +
+              (err.error?.message || err.message || 'Bilinmeyen hata'),
+              'Tamam',
+              { duration: 3000 }
+            );
+          }
+        });
       }
     });
   }

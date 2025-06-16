@@ -14,12 +14,12 @@ export class TaskService {
 
   createTask(taskData: any): Observable<any> {
     console.log('Görev oluşturma isteği:', taskData);
-    
+
     // task_status değeri yoksa varsayılan değer atayalım
     if (taskData.task_status === undefined || taskData.task_status === null) {
       taskData.task_status = 0; // KAPALI için varsayılan değer
     }
-    
+
     return this.http.post(this.apiUrl, taskData).pipe(
       tap(response => console.log('Görev oluşturma yanıtı:', response)),
       catchError(error => {
@@ -76,7 +76,7 @@ export class TaskService {
       taskId,
       maintenanceData
     });
-    
+
     return this.http.post(`${this.apiUrl}/${taskId}/maintenance/start`, maintenanceData).pipe(
       tap(response => {
         console.log('Kademe giriş yanıtı:', response);
@@ -115,12 +115,12 @@ export class TaskService {
   getAllTasks(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/all`);
   }
-  
+
   // Tüm bakımları getir
   getAllMaintenances(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/maintenances/all`);
   }
-  
+
   // Görev istatistiklerini getir
   getTaskStatistics(): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/statistics`);
@@ -144,15 +144,15 @@ export class TaskService {
     // Tarihleri ISO formatına dönüştür
     let formattedStartDate = null;
     let formattedEndDate = null;
-    
+
     if (filters.startDate) {
       formattedStartDate = filters.startDate.toISOString().split('T')[0];
     }
-    
+
     if (filters.endDate) {
       formattedEndDate = filters.endDate.toISOString().split('T')[0];
     }
-    
+
     return this.http.post<any[]>(`${this.apiUrl}/report`, {
       vehicleIds: filters.vehicles,
       vehicleTypes: filters.vehicleTypes,
@@ -172,9 +172,21 @@ export class TaskService {
 
   // Add new method to update task end KM
   updateTaskEndKm(taskId: number, endKm: number, reason: string): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/${taskId}/end-km`, { 
-      end_km: endKm, 
+    return this.http.put<any>(`${this.apiUrl}/${taskId}/end-km`, {
+      end_km: endKm,
+      reason: reason
+    });
+  }
+
+  // KM değerlerini güncelleyen metot - mevcut endpoint'i kullanarak
+  updateTaskKm(taskId: number, startKm: number, endKm: number, reason: string): Observable<any> {
+    // Mevcut endpoint'i kullanarak hem başlangıç hem bitiş KM değerlerini güncelleyelim
+    return this.http.put<any>(`${this.apiUrl}/${taskId}/km`, {
+      start_km: startKm,
+      end_km: endKm,
       reason: reason
     });
   }
 }
+
+// Bu servis, görevlerle ilgili CRUD işlemlerini ve diğer işlevleri sağlar.

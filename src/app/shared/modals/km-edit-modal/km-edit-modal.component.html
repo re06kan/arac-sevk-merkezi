@@ -1,0 +1,50 @@
+<h2 mat-dialog-title id="km-edit-dialog-title">KM Bilgisi Düzenle</h2>
+
+<mat-dialog-content>
+  <div class="vehicle-info">
+    <p><strong>Araç:</strong> {{data.vehicle?.military_plate}} ({{data.vehicle?.civilian_plate}})</p>
+    <p><strong>Görev Tarihi:</strong> {{data.task?.created_at | date:'dd.MM.yyyy HH:mm'}}</p>
+  </div>
+
+  <form [formGroup]="kmEditForm">
+    <!-- Çıkış KM alanı -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Çıkış KM</mat-label>
+      <input matInput type="number" formControlName="startKm" placeholder="Çıkış KM'sini giriniz">
+      <mat-error *ngIf="kmEditForm.get('startKm')?.hasError('required')">
+        Çıkış KM'si gereklidir
+      </mat-error>
+      <mat-error *ngIf="kmEditForm.get('startKm')?.hasError('min')">
+        Çıkış KM'si 0'dan büyük olmalıdır
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Geliş KM alanı -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Geliş KM</mat-label>
+      <input matInput type="number" formControlName="endKm" placeholder="Geliş KM'sini giriniz">
+      <mat-error *ngIf="kmEditForm.get('endKm')?.hasError('required')">
+        Geliş KM'si gereklidir
+      </mat-error>
+      <mat-error *ngIf="kmEditForm.get('endKm')?.hasError('min')">
+        Geliş KM'si çıkış KM'sinden büyük olmalıdır
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Değişiklik sebebi alanı -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Değişiklik Sebebi</mat-label>
+      <textarea matInput formControlName="reason" rows="3" placeholder="KM değişiklik sebebini giriniz"></textarea>
+      <mat-error *ngIf="kmEditForm.get('reason')?.hasError('required')">
+        Değişiklik sebebi gereklidir
+      </mat-error>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">İptal</button>
+  <button mat-raised-button color="primary" [disabled]="!kmEditForm.valid" (click)="onSave()">
+    Kaydet
+  </button>
+</mat-dialog-actions>

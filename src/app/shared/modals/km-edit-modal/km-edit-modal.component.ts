@@ -1,121 +1,143 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { Task } from '../../../interfaces/task.interface';
-import { A11yModule } from '@angular/cdk/a11y';
 
 @Component({
   selector: 'app-km-edit-modal',
   standalone: true,
   imports: [
     CommonModule,
-    MatDialogModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
     ReactiveFormsModule,
-    A11yModule
+    MatDialogModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule
   ],
   template: `
-    <h2 mat-dialog-title id="km-edit-dialog-title">KM Bilgisi Düzenle</h2>
-    <mat-dialog-content cdkTrapFocus [cdkTrapFocusAutoCapture]="true">
-      <form [formGroup]="kmForm">
-        <div class="form-container">
-          <p>
-            <strong>Araç:</strong> {{data.vehicle.military_plate}} ({{data.vehicle.brand}} {{data.vehicle.model}})
-          </p>
-          <p>
-            <strong>Görev:</strong> {{data.task.task_paper_no}} - {{data.task.route_description}}
-          </p>
-          <p>
-            <strong>Çıkış KM:</strong> {{data.task.start_km}}
-          </p>
-          
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Geliş KM</mat-label>
-            <input 
-              matInput 
-              type="number" 
-              formControlName="endKm"
-              placeholder="Geliş KM bilgisini giriniz"
-              aria-label="Geliş KM değeri">
-            <mat-error *ngIf="kmForm.get('endKm')?.hasError('required')">
-              Geliş KM zorunludur
-            </mat-error>
-            <mat-error *ngIf="kmForm.get('endKm')?.hasError('min')">
-              Geliş KM, çıkış KM'den büyük olmalıdır
-            </mat-error>
-          </mat-form-field>
-          
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Düzenleme Nedeni</mat-label>
-            <textarea 
-              matInput 
-              rows="2" 
-              formControlName="reason"
-              placeholder="Neden KM bilgisi değiştiriliyor?"
-              aria-label="Düzenleme nedeni"></textarea>
-            <mat-error *ngIf="kmForm.get('reason')?.hasError('required')">
-              Düzenleme nedeni zorunludur
-            </mat-error>
-          </mat-form-field>
-        </div>
+    <h2 mat-dialog-title>KM Bilgisi Düzenle</h2>
+
+    <mat-dialog-content>
+      <div class="vehicle-info">
+        <p><strong>Araç:</strong> {{data.vehicle?.military_plate}} ({{data.vehicle?.civilian_plate}})</p>
+        <p><strong>Görev Tarihi:</strong> {{data.task?.created_at | date:'dd.MM.yyyy HH:mm'}}</p>
+      </div>
+
+      <form [formGroup]="kmEditForm">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Çıkış KM</mat-label>
+          <input matInput type="number" formControlName="startKm" placeholder="Çıkış KM'sini giriniz">
+          <mat-error *ngIf="kmEditForm.get('startKm')?.hasError('required')">
+            Çıkış KM'si gereklidir
+          </mat-error>
+          <mat-error *ngIf="kmEditForm.get('startKm')?.hasError('min')">
+            Çıkış KM'si 0'dan büyük olmalıdır
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Geliş KM</mat-label>
+          <input matInput type="number" formControlName="endKm" placeholder="Geliş KM'sini giriniz">
+          <mat-error *ngIf="kmEditForm.get('endKm')?.hasError('required')">
+            Geliş KM'si gereklidir
+          </mat-error>
+          <mat-error *ngIf="kmEditForm.get('endKm')?.hasError('min')">
+            Geliş KM'si çıkış KM'sinden büyük olmalıdır
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Değişiklik Sebebi</mat-label>
+          <textarea matInput formControlName="reason" rows="3" placeholder="KM değişiklik sebebini giriniz"></textarea>
+          <mat-error *ngIf="kmEditForm.get('reason')?.hasError('required')">
+            Değişiklik sebebi gereklidir
+          </mat-error>
+        </mat-form-field>
       </form>
     </mat-dialog-content>
+
     <mat-dialog-actions align="end">
-      <button mat-button mat-dialog-close>İptal</button>
-      <button 
-        mat-raised-button 
-        color="primary" 
-        [disabled]="kmForm.invalid"
-        (click)="save()">Kaydet</button>
+      <button mat-button type="button" (click)="onCancel()">İptal</button>
+      <button
+        mat-raised-button
+        color="primary"
+        type="button"
+        [disabled]="!kmEditForm.valid"
+        (click)="onSave()">
+        Kaydet
+      </button>
     </mat-dialog-actions>
   `,
   styles: [`
-    .form-container {
-      min-width: 350px;
-    }
     .full-width {
       width: 100%;
+      margin-bottom: 16px;
+    }
+
+    .vehicle-info {
+      background-color: #f8f9fa;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+
+    .vehicle-info p {
+      margin: 4px 0;
+    }
+
+    .vehicle-info strong {
+      color: #1976d2;
+      margin-right: 8px;
     }
   `]
 })
-export class KmEditModalComponent implements OnInit {
-  kmForm: FormGroup;
+export class KmEditModalComponent {
+  kmEditForm: FormGroup;
 
   constructor(
+    private dialogRef: MatDialogRef<KmEditModalComponent>,
     private fb: FormBuilder,
-    public dialogRef: MatDialogRef<KmEditModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { 
-      task: Task,
-      vehicle: any
-    }
+    @Inject(MAT_DIALOG_DATA) public data: any
   ) {
-    this.kmForm = this.fb.group({
-      endKm: [data.task.end_km, [
-        Validators.required, 
-        Validators.min(data.task.start_km + 1)
-      ]],
+    this.kmEditForm = this.fb.group({
+      startKm: [data.task?.start_km || 0, [Validators.required, Validators.min(0)]],
+      endKm: [data.task?.end_km || 0, [Validators.required, Validators.min(0)]],
       reason: ['', Validators.required]
-    });
-    
-    // Set proper ARIA role for dialog
-    this.dialogRef.addPanelClass('a11y-dialog');
+    }, { validators: this.kmValidator });
+
+    // Erişilebilirlik ayarları
+    this.dialogRef.disableClose = false;
   }
 
-  ngOnInit(): void {}
+  // Çıkış KM ve Geliş KM validasyonu
+  kmValidator(form: FormGroup) {
+    const startKm = form.get('startKm')?.value;
+    const endKm = form.get('endKm')?.value;
 
-  save(): void {
-    if (this.kmForm.valid) {
+    if (startKm !== null && endKm !== null && endKm <= startKm) {
+      form.get('endKm')?.setErrors({ min: true });
+      return { invalidKm: true };
+    }
+
+    return null;
+  }
+
+  onCancel(): void {
+    this.dialogRef.close();
+  }
+
+  onSave(): void {
+    if (this.kmEditForm.valid) {
       this.dialogRef.close({
         taskId: this.data.task.id,
-        endKm: this.kmForm.value.endKm,
-        reason: this.kmForm.value.reason
+        startKm: this.kmEditForm.value.startKm,
+        endKm: this.kmEditForm.value.endKm,
+        reason: this.kmEditForm.value.reason
       });
     }
   }
 }
+//       throw error;
