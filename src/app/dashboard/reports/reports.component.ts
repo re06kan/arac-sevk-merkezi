@@ -410,11 +410,11 @@ export class ReportsComponent implements OnInit {
       pdf.setFontSize(18);
       pdf.text('Araç Görev Raporu', 14, 15);
 
-      // Tarih aralığı bilgisini ekle
+      // Tarih aralığı bilgisini ekle - Tarihe saat bilgisi de eklendi
       const startDate = this.filterForm.value.startDate ?
-        new Date(this.filterForm.value.startDate).toLocaleDateString('tr-TR') : 'Başlangıç';
+        new Date(this.filterForm.value.startDate).toLocaleString('tr-TR') : 'Başlangıç';
       const endDate = this.filterForm.value.endDate ?
-        new Date(this.filterForm.value.endDate).toLocaleDateString('tr-TR') : 'Bugün';
+        new Date(this.filterForm.value.endDate).toLocaleString('tr-TR') : 'Bugün';
 
       pdf.setFontSize(12);
       pdf.text(`Tarih Aralığı: ${startDate} - ${endDate}`, 14, 25);
@@ -470,7 +470,7 @@ export class ReportsComponent implements OnInit {
 
       // Tablo verileri - En çok 20 kayıt göster
       const rows = data.slice(0, 20).map((task: any) => [
-        new Date(task.start_date).toLocaleDateString('tr-TR'),
+        new Date(task.start_date).toLocaleString('tr-TR'), // Başlangıç tarihi (tarih + saat)
         // Askeri ve sivil plakayı birlikte göster
         task.military_plate ?
           (task.civilian_plate ? `${task.military_plate}\n${task.civilian_plate}` : task.military_plate) :
@@ -482,7 +482,7 @@ export class ReportsComponent implements OnInit {
         task.total_km?.toString() || '',
         task.duration_hours ? Number(task.duration_hours).toFixed(1) : '',
         task.task_status,
-        task.end_date ? new Date(task.end_date).toLocaleDateString('tr-TR') : '-' // Bitiş tarihini ekliyoruz
+        task.end_date ? new Date(task.end_date).toLocaleString('tr-TR') : '-' // Bitiş tarihi (tarih + saat)
       ]);
 
       try {
@@ -575,11 +575,11 @@ export class ReportsComponent implements OnInit {
     titleCell.value = 'ARAÇ GÖREV RAPORU';
     titleCell.style = titleStyle;
 
-    // Tarih aralığı
+    // Tarih aralığı - Tarihe saat bilgisi de eklendi
     const startDate = this.filterForm.value.startDate ?
-      new Date(this.filterForm.value.startDate).toLocaleDateString('tr-TR') : 'Başlangıç';
+      new Date(this.filterForm.value.startDate).toLocaleString('tr-TR') : 'Başlangıç';
     const endDate = this.filterForm.value.endDate ?
-      new Date(this.filterForm.value.endDate).toLocaleDateString('tr-TR') : 'Bugün';
+      new Date(this.filterForm.value.endDate).toLocaleString('tr-TR') : 'Bugün';
 
     summarySheet.mergeCells('A3:F3');
     summarySheet.getCell('A3').value = `Tarih Aralığı: ${startDate} - ${endDate}`;
@@ -694,7 +694,8 @@ export class ReportsComponent implements OnInit {
     data.forEach((task: any, idx: number) => {
       const rowIndex = 4 + idx;
 
-      detailSheet.getCell(`A${rowIndex}`).value = new Date(task.start_date).toLocaleDateString('tr-TR');
+      // Tarih bilgisi için toLocaleDateString yerine toLocaleString kullanıyoruz (tarih + saat)
+      detailSheet.getCell(`A${rowIndex}`).value = new Date(task.start_date).toLocaleString('tr-TR');
 
       // Askeri ve sivil plakayı alt alta göster
       if (task.military_plate && task.civilian_plate) {
@@ -719,7 +720,7 @@ export class ReportsComponent implements OnInit {
       // Number değerine dönüştürdük
       detailSheet.getCell(`J${rowIndex}`).value = task.duration_hours ? Number(task.duration_hours).toFixed(1) : '';
       detailSheet.getCell(`K${rowIndex}`).value = task.task_status;
-      detailSheet.getCell(`L${rowIndex}`).value = task.end_date ? new Date(task.end_date).toLocaleDateString('tr-TR') : '-'; // Bitiş tarihini ekliyoruz
+      detailSheet.getCell(`L${rowIndex}`).value = task.end_date ? new Date(task.end_date).toLocaleString('tr-TR') : '-'; // Bitiş tarihini ekliyoruz
 
       // Hücre çerçevelerini ayarla
       ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'].forEach(col => {
@@ -735,7 +736,7 @@ export class ReportsComponent implements OnInit {
     });
 
     // Kolon genişliklerini ayarla
-    detailSheet.getColumn('A').width = 15; // Tarih
+    detailSheet.getColumn('A').width = 20; // Tarih sütununu genişlet
     detailSheet.getColumn('B').width = 15; // Plaka
     detailSheet.getColumn('C').width = 20; // Sürücü
     detailSheet.getColumn('D').width = 25; // Tahsisli Makam
@@ -774,11 +775,11 @@ export class ReportsComponent implements OnInit {
     // Güncel KM sayfası oluştur
     const kmSheet = workbook.addWorksheet('Güncel KM Bilgileri');
 
-    // Başlık satırı ekle
-    kmSheet.mergeCells('A1:F1'); // Sütun sayısını arttırdık
+    // Başlık satırı ekle - tarihe göre başlık değiştir ve saat bilgisini ekle
+    kmSheet.mergeCells('A1:F1');
     const titleCell = kmSheet.getCell('A1');
     titleCell.value = this.selectedKmDate ?
-      `ARAÇ KM BİLGİLERİ (${new Date(this.selectedKmDate).toLocaleDateString('tr-TR')})` :
+      `ARAÇ KM BİLGİLERİ (${new Date(this.selectedKmDate).toLocaleString('tr-TR')})` :
       'GÜNCEL ARAÇ KM BİLGİLERİ';
     titleCell.style = {
       font: { bold: true, size: 16 },
@@ -860,7 +861,7 @@ export class ReportsComponent implements OnInit {
     kmSheet.getColumn('D').width = 15; // Marka
     kmSheet.getColumn('E').width = 15; // Model
     kmSheet.getColumn('F').width = 15; // KM
-    kmSheet.getColumn('G').width = 25; // Son güncelleme
+    kmSheet.getColumn('G').width = 30; // Son güncelleme (tarih + saat için daha geniş)
 
     // Excel dosyasını indir
     workbook.xlsx.writeBuffer().then((buffer) => {
